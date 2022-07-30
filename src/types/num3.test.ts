@@ -147,7 +147,7 @@ suite("num3", () => {
         });
         test("by a degree", () => {
             const v1 = num3(1, 0, 0);
-            const v2 = num3.rotatedeg(v1, 90);
+            const v2 = num3.rotateDeg(v1, 90);
             expect(v2.x).toBe(0);
             expect(v2.y).toBe(1);
             expect(v2.z).toBe(0);

@@ -193,7 +193,7 @@ export const num3 = createType({
         };
     },
     /** Returns a vector where `self` is rotated by an angle in degrees. */
-    rotatedeg(self: num3, degrees: number): num3 {
+    rotateDeg(self: num3, degrees: number): num3 {
         return this.rotate(self, (degrees * Math.PI) / 180)
     },
     /** Returns a vector that is equal to `self` rotated by 90 degrees. */

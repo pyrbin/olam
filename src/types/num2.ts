@@ -135,7 +135,7 @@ export const num2 = createType({
         let rcp = this.rlen(self);
         return rcp > 0.0 && isFinite(rcp) ? this.normalize(self) : undefined;
     },
-    /** Returns the normalized vector of `self` if possible, else returns `fallback` if supplied or defaults to `num3.zero`. */
+    /** Returns the normalized vector of `self` if possible, else returns `fallback` if supplied or defaults to `num2.zero`. */
     normalizeSafe(self: num2, fallback?: num2): num2 {
         return this.tryNormalize(self) ?? fallback ?? this.zero();
     },
@@ -166,7 +166,7 @@ export const num2 = createType({
         return { x: self.x * cos - self.y * sin, y: self.x * sin + self.y * cos };
     },
     /** Returns a vector where `self` is rotated by an angle in degrees. */
-    rotatedeg(self: num2, degrees: number): num2 {
+    rotateDeg(self: num2, degrees: number): num2 {
         return this.rotate(self, (degrees * Math.PI) / 180)
     },
     /** Returns a vector that is equal to `self` rotated by 90 degrees. */
