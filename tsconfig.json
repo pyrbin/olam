@@ -1,0 +1,23 @@
+{
+  "exclude": ["./out", "**/*.spec.ts", "vitest.config.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext",
+    "useDefineForClassFields": true,
+    "outDir": "out",
+    "rootDir": "src",
+    "typeRoots": ["./node_modules/@types", "./src/types.d.ts"],
+  }
+}

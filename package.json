@@ -1,0 +1,21 @@
+{
+  "name": "glina",
+  "version": "0.0.1",
+  "main": "out/mod.js",
+  "type": "module",
+  "types": "out/mod.d.ts",
+  "author": "pyrbin",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b -w",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "c8": "^7.12.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4",
+    "vitest": "^0.19.1"
+  }
+}
