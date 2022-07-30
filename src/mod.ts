@@ -4,6 +4,6 @@
  * author: pyrbin
  */
 
-export * from "./types/num2";
-export * from "./types/num3";
+export * from "./types/vec2";
+export * from "./types/vec3";
 

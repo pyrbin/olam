@@ -5,7 +5,7 @@ interface BaseImpl<Struct> {
     eq: (lhs: Struct, rhs: Struct) => boolean
 }
 
-/** Describes the exported object that contains implemented oprations for a type (eg. `num2`, `quat` etc.) */
+/** Describes the exported object that contains implemented oprations for a type (eg. `vec2`, `quat` etc.) */
 type Type<Struct, Impl extends BaseImpl<Struct>> = Impl & Impl["new"];
 
 /** Create an object with implemented math operations (by given `impl`) for given type `Struct` */
