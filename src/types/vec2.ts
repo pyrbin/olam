@@ -1,4 +1,4 @@
-import { rsqrt, sinCos } from "../math";
+import { recip, rsqrt, sinCos } from "../math";
 import { createType } from "../type";
 import { vec3 } from "./vec3";
 
@@ -10,23 +10,23 @@ export interface vec2 {
 
 /** Implements math operations for a 2-dimensional vector. */
 export const vec2 = createType({
-    /** Creates a new vector. */
+    /** Creates a vector. */
     new(x: number = 0, y: number = x): vec2 {
         return { x, y };
     },
-    /** Create a new vector from an array-like. */
+    /** Create a vector from an array-like. */
     fromArray(array: ArrayLike<number>): vec2 {
         return this.new(array[0] as number, array[1] as number);
     },
-    /** Creates a new vector where each element is set to zero. */
+    /** Creates a vector where each element is set to `0`. */
     zero(): vec2 {
         return this.new(0);
     },
-    /** Creates a new vector where each element is set to one. */
+    /** Creates a vector where each element is set to `1`. */
     one(): vec2 {
         return this.new(1);
     },
-    /** Creates a new vector where each element is set to negative one. */
+    /** Creates a vector where each element is set to `-1`. */
     negOne(): vec2 {
         return this.new(-1);
     },
@@ -47,38 +47,38 @@ export const vec2 = createType({
         return this.new(1, 0);
     },
     /** Returns a string interpretation of given vector `self`. */
-    str(self: vec2): string {
+    fmt(self: vec2): string {
         return `(${self.x}, ${self.y})`;
     },
     /** Returns each elemnt of `self` as an array. */
-    array(self: vec2): readonly [x: number, y: number] {
+    array(self: vec2): [x: number, y: number] {
         return [self.x, self.y];
     },
     /** Returns `self` as a 3-dimensional vector with given `z` value. */
     extend(self: vec2, z: number = 0): vec3 {
         return vec3.new(self.x, self.y, z);
     },
-    /** Addition between between two vectors `lhs` and `rhs`. */
+    /** Adds two vectors `lhs` and `rhs`. */
     add(lhs: vec2, rhs: vec2): vec2 {
         return { x: lhs.x + rhs.x, y: lhs.y + rhs.y };
     },
-    /** Subtraction between between two vectors `lhs` and `rhs`. */
+    /** Substracts two vectors `lhs` and `rhs`. */
     sub(lhs: vec2, rhs: vec2): vec2 {
         return { x: lhs.x - rhs.x, y: lhs.y - rhs.y };
     },
-    /** Multiplication between between two vectors `lhs` and `rhs`. */
+    /** Multiplies two vectors `lhs` and `rhs`. */
     mul(lhs: vec2, rhs: vec2): vec2 {
         return { x: lhs.x * rhs.x, y: lhs.y * rhs.y };
     },
-    /** Multiplication operation between a vector `lhs` and a scalar value `rhs`. */
+    /** Multiplies a vector `lhs` and a scalar value `rhs`. */
     scalar(lhs: vec2, rhs: number): vec2 {
         return { x: lhs.x * rhs, y: lhs.y * rhs };
     },
-    /** Division operation between two vectors `lhs` and `rhs`. */
+    /** Division between two vectors `lhs` and `rhs`. */
     div(lhs: vec2, rhs: vec2): vec2 {
         return { x: lhs.x / rhs.x, y: lhs.y / rhs.y };
     },
-    /** Equal operation between two vectors `lhs` and `rhs`. */
+    /** Check equality between two vectors `lhs` and `rhs`. */
     eq(lhs: vec2, rhs: vec2): boolean {
         return lhs.x === rhs.x && lhs.y === rhs.y;
     },
@@ -104,7 +104,7 @@ export const vec2 = createType({
     },
     /** Returns a vector containing the inverse value of each element of `self`. */
     inv(self: vec2): vec2 {
-        return { x: 1 / self.x, y: 1 / self.y };
+        return { x: recip(self.x), y: recip(self.y) };
     },
     /** Returns the length for given vector */
     len(self: vec2): number {
