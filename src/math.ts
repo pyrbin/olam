@@ -14,14 +14,15 @@ export function recip(value: number): number {
 }
 
 /** Converts degrees to radians. */
-export function rad(degrees: number): number {
-    return degrees * Math.PI / 180;
+export function deg(degrees: Deg): Rad {
+    return degrees * (Math.PI / 180.0);
 }
 
-/** Converts radians to degrees. */
-export function deg(radian: number): number {
-    return radian * 180 / Math.PI;
-}
+/** Radians */
+type Rad = number;
+
+/** Degrees */
+type Deg = number;
 
 /** Epsilon */
 export const epsilon = 1E-12;

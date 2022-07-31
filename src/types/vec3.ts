@@ -1,4 +1,4 @@
-import { epsilon, rad, recip, rsqrt, sincos } from "../math";
+import { deg, epsilon, recip, rsqrt, sincos } from "../math";
 import { createType } from "../type";
 import { vec2 } from "./vec2";
 
@@ -196,7 +196,7 @@ export const vec3 = createType({
     },
     /** Returns a vector where `self` is rotated by an angle in degrees. */
     rotateDeg(self: vec3, degrees: number): vec3 {
-        return this.rotate(self, rad(degrees));
+        return this.rotate(self, deg(degrees));
     },
     /** Returns a vector that is equal to `self` rotated by 90 degrees. */
     perp(self: vec3): vec3 {

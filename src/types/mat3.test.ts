@@ -1,5 +1,7 @@
 import { expect, suite, test } from "vitest";
+import { deg } from "../math";
 import { mat3 } from './mat3';
+import { vec2 } from "./vec2";
 import { vec3 } from "./vec3";
 
 suite("mat3", () => {
@@ -31,6 +33,45 @@ suite("mat3", () => {
         const m = mat3.identity();
         expect(mat3.eq(m, mat3.fromDiagonal(vec3(1, 1, 1)))).toBe(true);
         expect(vec3.eq(mat3.diagonal(m), vec3(1, 1, 1))).toBe(true);
+    });
+    test("create matrix from rotation", () => {
+        const m1x = mat3.fromAxisAngle(vec3.right(), deg(180.0));
+        const m2x = mat3.fromRotationX(deg(180.0))
+
+        expect(mat3.eq(m1x, m2x)).toBe(true);
+        expect(mat3.eq(m1x, mat3.fromDiagonal(vec3(1, -1, -1)))).toBe(true);
+
+        const m1y = mat3.fromAxisAngle(vec3.up(), deg(180.0));
+        const m2y = mat3.fromRotationY(deg(180.0))
+        expect(mat3.eq(m1y, m2y)).toBe(true);
+
+        const m1z = mat3.fromAxisAngle(vec3.forward(), deg(180.0));
+        const m2z = mat3.fromRotationZ(deg(180.0))
+        expect(mat3.eq(m1z, m2z)).toBe(true);
+    });
+    test("transform 2d", () => {
+        let m = mat3.fromTranslation(vec2(2, 4));
+        expect(vec2.eq(vec2.zero(), mat3.transformVec2(m, vec2.zero()))).toBe(true);
+        expect(vec2.eq(vec2(2.0, 4.0), mat3.transformPoint2(m, vec2.zero()))).toBe(true);
+        expect(vec2.eq(vec2.zero(), mat3.transformPoint2(m, vec2(-2.0, -4.0)))).toBe(true);
+
+        m = mat3.fromAngle(deg(90.0));
+        expect(vec2.eq(vec2.up(), mat3.transformVec2(m, vec2.right()))).toBe(true);
+        expect(vec2.eq(vec2.up(), mat3.transformPoint2(m, vec2.right()))).toBe(true);
+
+        m = mat3.fromScaleAngleTranslation(
+            vec2(0.5, 1.5),
+            deg(90.0),
+            vec2(1.0, 2.0),
+        );
+
+        let result = mat3.transformVec2(m, vec2.up());
+        expect(vec2.eq(result, vec2(-1.5, 0.0))).toBe(true);
+        expect(vec2.eq(result, mat3.mulVec3(m, vec3.up()))).toBe(true);
+
+        result = mat3.transformPoint2(m, vec2.up());
+        expect(vec2.eq(result, vec2(-0.5, 2.0))).toBe(true);
+        expect(vec2.eq(result, mat3.mulVec3(m, vec3(0, 1, 1)))).toBe(true)
     });
     test("add two matrices", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -82,11 +123,14 @@ suite("mat3", () => {
     test("compute transpose of matrix", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
         const m2 = mat3(1, 4, 7, 2, 5, 8, 3, 6, 9);
-        expect(mat3.eq(mat3.tm(m1), m2)).toBe(true);
+        expect(mat3.eq(mat3.transpose(m1), m2)).toBe(true);
     });
     test("compute determinant of matrix", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
         expect(mat3.det(m1)).toBe(0);
+        expect(mat3.det(mat3.zero())).toBe(0);
+        expect(mat3.det(mat3.identity())).toBe(1);
+        expect(mat3.det(mat3.fromRotationX(deg(90)))).toBe(1);
     });
     test("compute inverse of matrix", () => {
         const m1 = mat3(-5, 3, -2, 3, -1, 1, 6, -7, 2);

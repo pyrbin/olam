@@ -82,33 +82,33 @@ export const mat3 = createType({
         let xyomc = x * y * omc;
         let xzomc = x * z * omc;
         let yzomc = y * z * omc;
-        return this.new(
-            x2 * omc + cos, xyomc + zsin, xzomc - ysin,
-            xyomc - zsin, y2 * omc + cos, yzomc + xsin,
-            xzomc + ysin, yzomc - xsin, z2 * omc + cos);
+        return this.fromCols(
+            vec3(x2 * omc + cos, xyomc + zsin, xzomc - ysin),
+            vec3(xyomc - zsin, y2 * omc + cos, yzomc + xsin),
+            vec3(xzomc + ysin, yzomc - xsin, z2 * omc + cos));
     },
     /** Creates a 3x3 rotation matrix from angle `radians` around the x-axis */
     fromRotationX(radians: number): mat3 {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
             vec3.right(),
-            vec3(0, cos, -sin),
-            vec3(0, sin, cos));
+            vec3(0, cos, sin),
+            vec3(0, -sin, cos));
     },
     /** Creates a 3x3 rotation matrix from angle `radians` around the y-axis */
     fromRotationY(radians: number): mat3 {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, 0, sin),
+            vec3(cos, 0, -sin),
             vec3.up(),
-            vec3(-sin, 0, cos));
+            vec3(sin, 0, cos));
     },
     /** Creates a 3x3 rotation matrix from angle `radians` around the z-axis */
     fromRotationZ(radians: number): mat3 {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, -sin, 0),
-            vec3(sin, cos, 0),
+            vec3(cos, sin, 0),
+            vec3(-sin, cos, 0),
             vec3.forward());
     },
     /** Creates an affine transformation matrix from given `translation` */
@@ -122,8 +122,8 @@ export const mat3 = createType({
     fromAngle(radians: number): mat3 {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, -sin, 0),
-            vec3(sin, cos, 0),
+            vec3(cos, sin, 0),
+            vec3(-sin, cos, 0),
             vec3.forward());
     },
     /** Creates an affine transformation matrix from given non-uniform `scale` */
@@ -137,10 +137,10 @@ export const mat3 = createType({
     /** Creates an affine transformation matrix from given `scale`, angle `radians` and `translation` */
     fromScaleAngleTranslation(scale: vec2, radians: number, translation: vec2): mat3 {
         let [sin, cos] = sincos(radians);
-        return this.new(
-            cos * scale.x, sin * scale.x, 0.0,
-            -sin * scale.y, cos * scale.y, 0.0,
-            translation.x, translation.y, 1.0);
+        return this.fromCols(
+            vec3(cos * scale.x, sin * scale.x, 0.0),
+            vec3(-sin * scale.y, cos * scale.y, 0.0),
+            vec3(translation.x, translation.y, 1.0));
     },
     /** Creates an affine transformation matrix from the given 2x2 matrix. */
     fromMat2(mat: mat2): mat3 {
@@ -216,7 +216,7 @@ export const mat3 = createType({
         }
     },
     /** Returns the transpose of the matrix `self`. */
-    tm(self: mat3): mat3 {
+    transpose(self: mat3): mat3 {
         return this.fromCols(
             vec3(self.c0.x, self.c1.x, self.c2.x),
             vec3(self.c0.y, self.c1.y, self.c2.y),
@@ -236,7 +236,7 @@ export const mat3 = createType({
         let det = this.det(self);
         assert(det !== 0, "can't invert matrix with determinant zero.");
         let invDet = vec3(recip(det));
-        return mat3.tm(this.fromCols(
+        return mat3.transpose(this.fromCols(
             vec3.mul(tmp0, invDet),
             vec3.mul(tmp1, invDet),
             vec3.mul(tmp2, invDet)

@@ -132,7 +132,7 @@ export const mat2 = createType({
         }
     },
     /** Returns the transpose of the matrix `self`. */
-    tm(self: mat2): mat2 {
+    transpose(self: mat2): mat2 {
         return {
             c0: vec2(self.c0.x, self.c1.x),
             c1: vec2(self.c0.y, self.c1.y),

@@ -74,13 +74,14 @@ suite("mat2", () => {
     });
     test("compute determinant of a matrix", () => {
         const m = mat2(1, 2, 3, 4);
-        const m2 = mat2.tm(m);
+        const m2 = mat2.transpose(m);
         expect(mat2.eq(m2, mat2(1, 3, 2, 4))).toBe(true);
     });
     test("compute determinant of a matrix", () => {
         const m = mat2(1, 2, 3, 4);
-        const d = mat2.det(m);
-        expect(d).toBe(-2);
+        expect(mat2.det(m)).toBe(-2);
+        expect(mat2.det(mat2.zero())).toBe(0);
+        expect(mat2.det(mat2.identity())).toBe(1);
     });
     test("compute inverse of a matrix", () => {
         const m = mat2(1, 2, 3, 4);
