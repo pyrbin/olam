@@ -1,4 +1,4 @@
-import { recip, rsqrt, sinCos } from "../math";
+import { epsilon, recip, rsqrt, sincos } from "../math";
 import { createType } from "../type";
 import { vec3 } from "./vec3";
 
@@ -13,10 +13,6 @@ export const vec2 = createType({
     /** Creates a vector. */
     new(x: number = 0, y: number = x): vec2 {
         return { x, y };
-    },
-    /** Create a vector from an array-like. */
-    fromArray(array: ArrayLike<number>): vec2 {
-        return this.new(array[0] as number, array[1] as number);
     },
     /** Creates a vector where each element is set to `0`. */
     zero(): vec2 {
@@ -50,6 +46,10 @@ export const vec2 = createType({
     fmt(self: vec2): string {
         return `(${self.x}, ${self.y})`;
     },
+    /** Create a vector from an array-like. */
+    fromArray(array: ArrayLike<number>): vec2 {
+        return this.new(array[0] as number, array[1] as number);
+    },
     /** Returns each elemnt of `self` as an array. */
     array(self: vec2): [x: number, y: number] {
         return [self.x, self.y];
@@ -80,7 +80,8 @@ export const vec2 = createType({
     },
     /** Check equality between two vectors `lhs` and `rhs`. */
     eq(lhs: vec2, rhs: vec2): boolean {
-        return lhs.x === rhs.x && lhs.y === rhs.y;
+        return Math.abs(lhs.x - rhs.x) <= epsilon &&
+            Math.abs(lhs.y - rhs.y) <= epsilon
     },
     /** Returns true if each element of `self` is finite. */
     isFinite(self: vec2): boolean {
@@ -162,7 +163,7 @@ export const vec2 = createType({
     },
     /** Returns a vector where `self` is rotated by an angle in radians. */
     rotate(self: vec2, radians: number): vec2 {
-        let [sin, cos] = sinCos(radians);
+        let [sin, cos] = sincos(radians);
         return { x: self.x * cos - self.y * sin, y: self.x * sin + self.y * cos };
     },
     /** Returns a vector where `self` is rotated by an angle in degrees. */

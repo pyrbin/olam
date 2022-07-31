@@ -52,17 +52,15 @@ suite("mat2", () => {
         const m2 = mat2.scalar(m, 3);
         expect(mat2.eq(m2, mat2(3, 6, 9, 6))).toBe(true);
     });
-    test("divide two matrices", () => {
-        const m1 = mat2(1, 2, 3, 2);
-        const m2 = mat2(1, 2, 3, 2);
-        const m3 = mat2.div(m1, m2);
-        expect(mat2.eq(m3, mat2(1, 1, 1, 1))).toBe(true);
-    });
     test("get column of a matrix", () => {
         const m = mat2(1, 2, 3, 2);
         const v = mat2.col(m, 0);
         expect(v.x).toBe(1);
         expect(v.y).toBe(2);
+    });
+    test("get row out of range", () => {
+        const m = mat2(1, 2, 3, 2);
+        expect(() => mat2.col(m, 3)).toThrow();
     });
     test("get row of a matrix", () => {
         const m = mat2(1, 2, 3, 2);
@@ -74,9 +72,9 @@ suite("mat2", () => {
         const m = mat2(1, 2, 3, 2);
         expect(() => mat2.row(m, 2)).toThrow();
     });
-    test("transpose a matrix", () => {
+    test("compute determinant of a matrix", () => {
         const m = mat2(1, 2, 3, 4);
-        const m2 = mat2.transpose(m);
+        const m2 = mat2.tm(m);
         expect(mat2.eq(m2, mat2(1, 3, 2, 4))).toBe(true);
     });
     test("compute determinant of a matrix", () => {

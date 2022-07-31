@@ -1,4 +1,4 @@
-import { recip, rsqrt, sinCos } from "../math";
+import { epsilon, rad, recip, rsqrt, sincos } from "../math";
 import { createType } from "../type";
 import { vec2 } from "./vec2";
 
@@ -14,10 +14,6 @@ export const vec3 = createType({
     /** Creates a vector. */
     new(x: number = 0, y: number = x, z: number = y): vec3 {
         return { x, y, z };
-    },
-    /** Create a vector from an array-like. */
-    fromArray(array: ArrayLike<number>): vec3 {
-        return this.new(array[0] as number, array[1] as number, array[2] as number);
     },
     /** Creates a vector where each element is set to `0`. */
     zero(): vec3 {
@@ -58,6 +54,10 @@ export const vec3 = createType({
     /** Returns a string interpretation of given vector `self`. */
     fmt(self: vec3): string {
         return `(${self.x}, ${self.y}, ${self.z})`;
+    },
+    /** Create a vector from an array-like. */
+    fromArray(array: ArrayLike<number>): vec3 {
+        return this.new(array[0] as number, array[1] as number, array[2] as number);
     },
     /** Returns each elemnt of `self` as an array. */
     array(self: vec3): [x: number, y: number, z: number] {
@@ -101,7 +101,9 @@ export const vec3 = createType({
     },
     /** Check equality between two vectors `lhs` and `rhs`. */
     eq(lhs: vec3, rhs: vec3): boolean {
-        return lhs.x === rhs.x && lhs.y === rhs.y && lhs.z === rhs.z;
+        return Math.abs(lhs.x - rhs.x) <= epsilon &&
+            Math.abs(lhs.y - rhs.y) <= epsilon &&
+            Math.abs(lhs.z - rhs.z) <= epsilon;
     },
     /** Returns true if each element of `self` is finite. */
     isFinite(self: vec3): boolean {
@@ -185,7 +187,7 @@ export const vec3 = createType({
     },
     /** Returns a vector where `self` is rotated by an angle in radians. */
     rotate(self: vec3, radians: number): vec3 {
-        let [sin, cos] = sinCos(radians)
+        let [sin, cos] = sincos(radians)
         return {
             x: self.x * cos - self.y * sin,
             y: self.x * sin + self.y * cos,
@@ -194,7 +196,7 @@ export const vec3 = createType({
     },
     /** Returns a vector where `self` is rotated by an angle in degrees. */
     rotateDeg(self: vec3, degrees: number): vec3 {
-        return this.rotate(self, (degrees * Math.PI) / 180)
+        return this.rotate(self, rad(degrees));
     },
     /** Returns a vector that is equal to `self` rotated by 90 degrees. */
     perp(self: vec3): vec3 {

@@ -1,5 +1,5 @@
 import { assert, panic } from "../debug";
-import { recip, sinCos } from "../math";
+import { recip, sincos } from "../math";
 import { vec2 } from "../mod";
 import { createType } from "../type";
 
@@ -9,9 +9,6 @@ export interface mat2 {
     c1: vec2;
 }
 
-type ColsArray = [m00: number, m01: number, m10: number, m11: number];
-type ColsArray2d = [[ColsArray[0], ColsArray[1]], [ColsArray[2], ColsArray[3]]];
-
 /** Implements math operations for a 2x2 column major matrix. */
 export const mat2 = createType({
     /** Create a new 2x2 matrix */
@@ -20,32 +17,6 @@ export const mat2 = createType({
             c0: vec2(args[0], args[1]),
             c1: vec2(args[2], args[3]),
         };
-    },
-    /** Creates a 2x2 matrix from two column vectors. */
-    fromCols(x: vec2, y: vec2): mat2 {
-        return this.new(x.x, x.y, y.x, y.y);
-    },
-    /** Creates a 2x2 matrix from an array-like. */
-    fromArray(array: ArrayLike<number>): mat2 {
-        return this.new(array[0], array[1], array[2], array[3]);
-    },
-    /** Creates a 2x2 matrix from an 2d array. */
-    fromArray2d(array: [ArrayLike<number>, ArrayLike<number>]): mat2 {
-        return this.fromCols(vec2.fromArray(array[0]), vec2.fromArray(array[1]));
-    },
-    /** Creates a 2x2 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
-    fromDiagonal(diagonal: vec2): mat2 {
-        return this.new(diagonal.x, 0, 0, diagonal.y);
-    },
-    /** Creates a 2x2 matrix containing the combining non-uniform `scale` and rotation of `radians`. */
-    fromScaleAngle(scale: vec2, radians: number): mat2 {
-        const [sin, cos] = sinCos(radians);
-        return this.new(scale.x * cos, scale.x * -sin, scale.y * sin, scale.y * cos);
-    },
-    /** Creates a 2x2 matrix containing a rotation of `radians`. */
-    fromAngle(radians: number): mat2 {
-        const [sin, cos] = sinCos(radians);
-        return this.new(cos, -sin, sin, cos);
     },
     /** Creates a matrix with all entries set to `0`. */
     zero(): mat2 {
@@ -69,7 +40,33 @@ export const mat2 = createType({
     },
     /** Returns a string interpretation of given matrix `self`. */
     fmt(self: mat2): string {
-        return `${vec2.fmt(vec2(self.c0.x, self.c1.x))}\n${vec2.fmt(vec2(self.c0.y, self.c1.y))}`;
+        return `${vec2.fmt(this.row(self, 0))}\n${vec2.fmt(this.row(self, 1))}`;
+    },
+    /** Creates a 2x2 matrix from two column vectors. */
+    fromCols(x: vec2, y: vec2): mat2 {
+        return this.new(x.x, x.y, y.x, y.y);
+    },
+    /** Creates a 2x2 matrix from an array-like. */
+    fromArray(array: ArrayLike<number>): mat2 {
+        return this.new(array[0], array[1], array[2], array[3]);
+    },
+    /** Creates a 2x2 matrix from an 2d array. */
+    fromArray2d(array: [ArrayLike<number>, ArrayLike<number>]): mat2 {
+        return this.fromCols(vec2.fromArray(array[0]), vec2.fromArray(array[1]));
+    },
+    /** Creates a 2x2 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
+    fromDiagonal(diagonal: vec2): mat2 {
+        return this.new(diagonal.x, 0, 0, diagonal.y);
+    },
+    /** Creates a 2x2 matrix containing the combining non-uniform `scale` and rotation of `radians`. */
+    fromScaleAngle(scale: vec2, radians: number): mat2 {
+        const [sin, cos] = sincos(radians);
+        return this.new(scale.x * cos, scale.x * -sin, scale.y * sin, scale.y * cos);
+    },
+    /** Creates a 2x2 matrix containing a rotation of `radians`. */
+    fromAngle(radians: number): mat2 {
+        const [sin, cos] = sincos(radians);
+        return this.new(cos, -sin, sin, cos);
     },
     /** Adds two matrices `lhs` and `rhs`. */
     add(lhs: mat2, rhs: mat2): mat2 {
@@ -106,16 +103,9 @@ export const mat2 = createType({
             vec2.scalar(lhs.c1, rhs)
         );
     },
-    /** Division between two matrices `lhs` and `rhs`. */
-    div(lhs: mat2, rhs: mat2): mat2 {
-        return this.fromCols(
-            vec2.div(lhs.c0, rhs.c0),
-            vec2.div(lhs.c1, rhs.c1)
-        );
-    },
     /** Check equality between two matrices `lhs` and `rhs`. */
-    eq(lhs: mat2, other: mat2): boolean {
-        return vec2.eq(lhs.c0, other.c0) && vec2.eq(lhs.c1, other.c1);
+    eq(lhs: mat2, rhs: mat2): boolean {
+        return vec2.eq(lhs.c0, rhs.c0) && vec2.eq(lhs.c1, rhs.c1);
     },
     /** Returns true if each entry of `self` is finite. */
     isFinite(self: mat2): boolean {
@@ -141,21 +131,21 @@ export const mat2 = createType({
             default: panic(`index out of range: ${index}`);
         }
     },
-    /** Returns the determinant of the matrix. */
-    transpose(self: mat2): mat2 {
+    /** Returns the transpose of the matrix `self`. */
+    tm(self: mat2): mat2 {
         return {
             c0: vec2(self.c0.x, self.c1.x),
             c1: vec2(self.c0.y, self.c1.y),
         }
     },
-    /** Returns the determinant of the matrix. */
+    /** Returns the determinant of the matrix `self`. */
     det(self: mat2): number {
         return self.c0.x * self.c1.y - self.c0.y * self.c1.x;
     },
-    /** Returns the inverse matrix of given matrix `self`. Throws if the determinant of `self` is zero */
+    /** Returns the inverse matrix of the matrix `self`. Throws if the determinant of `self` is zero */
     inv(self: mat2): mat2 {
         let det = this.det(self);
-        assert(det !== 0, "cannot invert matrix with zero determinant");
+        assert(det !== 0, "can't invert matrix with zero determinant");
         let inv = recip(det);
         return this.new(
             inv * self.c1.y, -inv * self.c0.y,
@@ -163,3 +153,17 @@ export const mat2 = createType({
         );
     }
 })
+
+/** Describes every entry of a 2x2 matrix as a single array */
+type ColsArray = [
+    m00: number,
+    m01: number,
+    m10: number,
+    m11: number
+];
+
+/** Describes every entry of a 2x2 matrix as a 2-d array */
+type ColsArray2d = [
+    c0: [ColsArray[0], ColsArray[1]],
+    c1: [ColsArray[2], ColsArray[3]]
+];
