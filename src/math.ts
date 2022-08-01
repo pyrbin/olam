@@ -1,3 +1,6 @@
+/** Epsilon */
+export const epsilon = 1E-8;
+
 /** Returns sin and cos of a number.*/
 export function sincos(value: number): [sin: number, cos: number] {
     return [Math.sin(value), Math.cos(value)];
@@ -18,11 +21,17 @@ export function deg(degrees: Deg): Rad {
     return degrees * (Math.PI / 180.0);
 }
 
-/** Radians */
-type Rad = number;
+/** Checks if two numbers are equal within an epsilon. */
+export function eqf(lhs: number, rhs: number): boolean {
+    return Math.abs(lhs - rhs) < epsilon;
+}
 
-/** Degrees */
-type Deg = number;
+/** Clamp a float to (min, max).*/
+export function clamp(x: number, min: number, max: number): number {
+    return x < min ? min : x > max ? max : x;
+}
 
-/** Epsilon */
-export const epsilon = 1E-12;
+/** Linear interpolates between 2 numbers. */
+export function lerp(a: number, b: number, t: number): number {
+    return a * (1 - t) + b * t;
+}

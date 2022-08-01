@@ -1,5 +1,8 @@
 import { expect, suite, test } from "vitest";
-import { vec2 } from './vec2';
+import { deg } from "../math";
+import { vec2 } from '../mod';
+
+const t: vec2 = vec2.zero();
 
 suite("vec2", () => {
     test("create a new vector", () => {
@@ -33,9 +36,9 @@ suite("vec2", () => {
         expect(v3.x).toBe(3);
         expect(v3.y).toBe(8);
     });
-    test("multiply a vector by a scalar", () => {
+    test("multiply a vector by a scale", () => {
         const v1 = vec2(1, 2);
-        const v2 = vec2.scalar(v1, 3);
+        const v2 = vec2.scale(v1, 3);
         expect(v2.x).toBe(3);
         expect(v2.y).toBe(6);
     });
@@ -72,9 +75,11 @@ suite("vec2", () => {
     });
     test("normalize an invalid vector", () => {
         const v1 = vec2(0, 0);
-        const v2 = vec2.normalizeSafe(v1, vec2(5, 5));
-        expect(v2.x).toBe(5);
-        expect(v2.y).toBe(5);
+        const v2 = vec2.normalizeSafe(v1);
+        const v3 = vec2.normalize(v1);
+        expect(vec2.isNormalized(v3)).toBe(false);
+        expect(v2.x).toBe(0);
+        expect(v2.y).toBe(0);
         expect(vec2.isNormalized(v2)).toBe(false);
     });
     test("compute the angle between two vectors", () => {
@@ -118,7 +123,7 @@ suite("vec2", () => {
         });
         test("by a degree", () => {
             const v1 = vec2(1, 0);
-            const v2 = vec2.rotateDeg(v1, 90);
+            const v2 = vec2.rotate(v1, deg(90));
             expect(v2.x).toBe(0);
             expect(v2.y).toBe(1);
         });

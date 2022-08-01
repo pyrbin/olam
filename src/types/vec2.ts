@@ -1,4 +1,4 @@
-import { epsilon, recip, rsqrt, sincos } from "../math";
+import { epsilon, eqf, recip, sincos } from "../math";
 import { createType } from "../type";
 import { vec3 } from "./vec3";
 
@@ -8,116 +8,124 @@ export interface vec2 {
     y: number;
 }
 
+/** @internal */
+function create(x: number = 0, y: number = x): vec2 {
+    return { x, y };
+}
+
 /** Implements math operations for a 2-dimensional vector. */
-export const vec2 = createType({
+export let vec2 = createType({
     /** Creates a vector. */
-    new(x: number = 0, y: number = x): vec2 {
-        return { x, y };
-    },
+    new: create,
     /** Creates a vector where each element is set to `0`. */
     zero(): vec2 {
-        return this.new(0);
+        return create(0);
     },
     /** Creates a vector where each element is set to `1`. */
     one(): vec2 {
-        return this.new(1);
-    },
-    /** Creates a vector where each element is set to `-1`. */
-    negOne(): vec2 {
-        return this.new(-1);
+        return create(1);
     },
     /** A unit-length vector pointing along the positive y-axis. */
     up(): vec2 {
-        return this.new(0, 1);
+        return create(0, 1);
     },
     /** A unit-length vector pointing along the negative y-axis. */
     down(): vec2 {
-        return this.new(0, -1);
+        return create(0, -1);
     },
     /** A unit-length vector pointing along the negative x-axis. */
     left(): vec2 {
-        return this.new(-1, 0);
+        return create(-1, 0);
     },
     /** A unit-length vector pointing along the positive x-axis. */
     right(): vec2 {
-        return this.new(1, 0);
+        return create(1, 0);
     },
-    /** Returns a string interpretation of given vector `self`. */
-    fmt(self: vec2): string {
-        return `(${self.x}, ${self.y})`;
+    /** Set properties of given vector `target` */
+    set(target: vec2, x: number, y: number): vec2 {
+        target.x = x;
+        target.y = y;
+        return target;
+    },
+    /** Copies properies from `b` to target vector `a` */
+    copy(a: vec2, b: vec2): vec2 {
+        return this.set(a, b.x, b.y);
     },
     /** Create a vector from an array-like. */
-    fromArray(array: ArrayLike<number>): vec2 {
-        return this.new(array[0] as number, array[1] as number);
+    fromArray(array: ArrayLike<number>, out = create()): vec2 {
+        return this.set(out, array[0] as number, array[1] as number);
     },
-    /** Returns each elemnt of `self` as an array. */
-    array(self: vec2): [x: number, y: number] {
-        return [self.x, self.y];
+    /** Returns each elemnt of `target` as an array. */
+    toArray(target: vec2): [x: number, y: number] {
+        return [target.x, target.y];
     },
-    /** Returns `self` as a 3-dimensional vector with given `z` value. */
-    extend(self: vec2, z: number = 0): vec3 {
-        return vec3.new(self.x, self.y, z);
+    /** Returns `target` as a 3-dimensional vector with given `z` value. */
+    extend(target: vec2, z: number = 0, out = { x: 0, y: 0, z: 0 }): vec3 {
+        return vec3.set(out, target.x, target.y, z);
+    },
+    /** Returns true if each element of `target` is finite. */
+    isFinite(target: vec2): boolean {
+        return isFinite(target.x) && isFinite(target.y);
+    },
+    /** Returns true if any element of `target` is NaN. */
+    isNan(target: vec2): boolean {
+        return isNaN(target.x) || isNaN(target.y);
+    },
+    /** Returns true if given vector is normalized. */
+    isNormalized(target: vec2): boolean {
+        return Math.abs(this.len2(target) - 1) <= epsilon;
     },
     /** Adds two vectors `lhs` and `rhs`. */
-    add(lhs: vec2, rhs: vec2): vec2 {
-        return { x: lhs.x + rhs.x, y: lhs.y + rhs.y };
+    add(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.set(out, lhs.x + rhs.x, lhs.y + rhs.y);
     },
     /** Substracts two vectors `lhs` and `rhs`. */
-    sub(lhs: vec2, rhs: vec2): vec2 {
-        return { x: lhs.x - rhs.x, y: lhs.y - rhs.y };
+    sub(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.set(out, lhs.x - rhs.x, lhs.y - rhs.y);
     },
     /** Multiplies two vectors `lhs` and `rhs`. */
-    mul(lhs: vec2, rhs: vec2): vec2 {
-        return { x: lhs.x * rhs.x, y: lhs.y * rhs.y };
+    mul(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.set(out, lhs.x * rhs.x, lhs.y * rhs.y);
     },
-    /** Multiplies a vector `lhs` and a scalar value `rhs`. */
-    scalar(lhs: vec2, rhs: number): vec2 {
-        return { x: lhs.x * rhs, y: lhs.y * rhs };
+    /** Multiplies a vector `lhs` and a scale value `rhs`. */
+    scale(lhs: vec2, rhs: number, out = create()): vec2 {
+        return this.set(out, lhs.x * rhs, lhs.y * rhs);
     },
     /** Division between two vectors `lhs` and `rhs`. */
-    div(lhs: vec2, rhs: vec2): vec2 {
-        return { x: lhs.x / rhs.x, y: lhs.y / rhs.y };
+    div(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.set(out, lhs.x / rhs.x, lhs.y / rhs.y);
     },
     /** Check equality between two vectors `lhs` and `rhs`. */
     eq(lhs: vec2, rhs: vec2): boolean {
-        return Math.abs(lhs.x - rhs.x) <= epsilon &&
-            Math.abs(lhs.y - rhs.y) <= epsilon
+        return eqf(lhs.x, rhs.x) && eqf(lhs.y, rhs.y);
     },
-    /** Returns true if each element of `self` is finite. */
-    isFinite(self: vec2): boolean {
-        return isFinite(self.x) && isFinite(self.y);
+    /** Returns a vector containing the absolute value of each element of `target`. */
+    abs(target: vec2, out = create()): vec2 {
+        return this.set(out, Math.abs(target.x), Math.abs(target.y));
     },
-    /** Returns true if any element of `self` is NaN. */
-    isNan(self: vec2): boolean {
-        return isNaN(self.x) || isNaN(self.y);
+    /** Returns a vector containing the negative value of each element of `target`. */
+    neg(target: vec2, out = create()): vec2 {
+        return this.set(out, -target.x, -target.y);
     },
-    /** Returns true if given vector is normalized. */
-    isNormalized(self: vec2): boolean {
-        return Math.abs(this.len2(self) - 1) <= 1e-4;
+    /** Returns a vector containing the inverse value of each element of `target`. */
+    inv(target: vec2, out = create()): vec2 {
+        return this.set(out, recip(target.x), recip(target.y));
     },
-    /** Returns a vector containing the absolute value of each element of `self`. */
-    abs(self: vec2): vec2 {
-        return { x: Math.abs(self.x), y: Math.abs(self.y) };
-    },
-    /** Returns a vector containing the negative value of each element of `self`. */
-    neg(self: vec2): vec2 {
-        return { x: -self.x, y: -self.y };
-    },
-    /** Returns a vector containing the inverse value of each element of `self`. */
-    inv(self: vec2): vec2 {
-        return { x: recip(self.x), y: recip(self.y) };
+    /** Returns a vector that is equal to `target` rotated by 90 degrees. */
+    perp(target: vec2, out = create()): vec2 {
+        return this.set(out, -target.y, target.x);
     },
     /** Returns the length for given vector */
-    len(self: vec2): number {
-        return Math.sqrt(this.len2(self));
+    len(target: vec2): number {
+        return Math.sqrt(this.len2(target));
     },
     /** Returns the length squared for given vector. */
-    len2(self: vec2): number {
-        return self.x * self.x + self.y * self.y;
+    len2(target: vec2): number {
+        return target.x * target.x + target.y * target.y;
     },
     /** Computes `1.0 / len()` for given vector. */
-    rlen(self: vec2): number {
-        return 1 / this.len(self);
+    rlen(target: vec2): number {
+        return 1 / this.len(target);
     },
     /** Returns the euclidean distance between two vectors. */
     dist(lhs: vec2, rhs: vec2): number {
@@ -127,18 +135,17 @@ export const vec2 = createType({
     dist2(lhs: vec2, rhs: vec2): number {
         return this.len2(this.sub(lhs, rhs));
     },
-    /** Returns `self` as a normalized vector. */
-    normalize(self: vec2): vec2 {
-        return this.scalar(self, rsqrt(this.dot(self, self)));
+    /** Returns `target` as a normalized vector. */
+    normalize(target: vec2, out = create()): vec2 {
+        return this.scale(target, recip(this.len(target)), out);
     },
-    /** Returns the normalized vector of `self` if possible, else `undefined`. */
-    tryNormalize(self: vec2): Maybe<vec2> {
-        let rcp = this.rlen(self);
-        return rcp > 0.0 && isFinite(rcp) ? this.normalize(self) : undefined;
-    },
-    /** Returns the normalized vector of `self` if possible, else returns `fallback` if supplied or defaults to `vec2.zero`. */
-    normalizeSafe(self: vec2, fallback?: vec2): vec2 {
-        return this.tryNormalize(self) ?? fallback ?? this.zero();
+    /** Returns the normalized vector of `target` if possible, else `(0,0)`. */
+    normalizeSafe(target: vec2, out = create()): vec2 {
+        let rcp = this.rlen(target);
+        if (rcp > 0.0 && isFinite(rcp)) {
+            return this.normalize(target, out);
+        }
+        return this.set(out, 0, 0);
     },
     /** Returns the dot product of given two vectors. */
     dot(lhs: vec2, rhs: vec2): number {
@@ -149,33 +156,25 @@ export const vec2 = createType({
         return lhs.x * rhs.y - lhs.y * rhs.x;
     },
     /** Returns the vector projection of `lhs` onto `rhs`. */
-    project(lhs: vec2, rhs: vec2): vec2 {
-        return this.scalar(rhs, this.dot(lhs, rhs));
+    project(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.scale(rhs, this.dot(lhs, rhs), out);
     },
     /** Returns the reflection vector, given an incident vector `lhs` and a normal vector `rhs`. */
-    reflect(lhs: vec2, rhs: vec2): vec2 {
-        return this.sub(lhs, this.project(lhs, rhs));
+    reflect(lhs: vec2, rhs: vec2, out = create()): vec2 {
+        return this.sub(lhs, this.project(lhs, rhs, out), out);
     },
     /** Returns the angle (in radians) between the two vectors. */
     angle(lhs: vec2, rhs: vec2): number {
         let angle = Math.acos(this.dot(lhs, rhs) / (this.len(lhs) * this.len(rhs)));
         return angle * Math.sign(this.cross(lhs, rhs));
     },
-    /** Returns a vector where `self` is rotated by an angle in radians. */
-    rotate(self: vec2, radians: number): vec2 {
+    /** Returns a vector where `target` is rotated by an angle in radians. */
+    rotate(target: vec2, radians: number, out = create()): vec2 {
         let [sin, cos] = sincos(radians);
-        return { x: self.x * cos - self.y * sin, y: self.x * sin + self.y * cos };
+        return this.set(out, target.x * cos - target.y * sin, target.x * sin + target.y * cos);
     },
-    /** Returns a vector where `self` is rotated by an angle in degrees. */
-    rotateDeg(self: vec2, degrees: number): vec2 {
-        return this.rotate(self, (degrees * Math.PI) / 180)
-    },
-    /** Returns a vector that is equal to `self` rotated by 90 degrees. */
-    perp(self: vec2): vec2 {
-        return { x: -self.y, y: self.x };
-    },
-    /** Performs a linear interpolation between `self` and `rhs` based on the value `t`. */
-    lerp(self: vec2, rhs: vec2, t: number): vec2 {
-        return this.add(self, this.scalar(this.sub(rhs, self), t));
+    /** Performs a linear interpolation between `a` and `b` based on the value `t`. */
+    lerp(a: vec2, b: vec2, t: number, out = create()): vec2 {
+        return this.add(a, this.scale(this.sub(b, a, out), t, out), out);
     }
 })

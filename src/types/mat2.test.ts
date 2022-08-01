@@ -20,7 +20,7 @@ suite("mat2", () => {
     test("create identity matrix", () => {
         const m = mat2.identity();
         expect(mat2.eq(m, mat2.fromDiagonal(vec2(1, 1)))).toBe(true);
-        expect(vec2.eq(mat2.diagonal(m), vec2(1, 1))).toBe(true);
+        expect(vec2.eq(mat2.toDiagonal(m), vec2(1, 1))).toBe(true);
     });
     test("add two matrices", () => {
         const m1 = mat2(1, 2, 3, 2);
@@ -43,13 +43,13 @@ suite("mat2", () => {
     test("multiply a matrix by a vector", () => {
         const m = mat2(5, 2, 9, 7);
         const v = vec2(6, 5);
-        const v2 = mat2.mulVec2(m, v);
+        const v2 = mat2.vmul2(m, v);
         expect(v2.x).toBe(75);
         expect(v2.y).toBe(47);
     });
-    test("multiply a matrix by a scalar", () => {
+    test("multiply a matrix by a scale", () => {
         const m = mat2(1, 2, 3, 2);
-        const m2 = mat2.scalar(m, 3);
+        const m2 = mat2.scale(m, 3);
         expect(mat2.eq(m2, mat2(3, 6, 9, 6))).toBe(true);
     });
     test("get column of a matrix", () => {

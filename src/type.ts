@@ -1,7 +1,6 @@
 /** Describes the default implementation that's required by all types */
 interface BaseImpl<Struct> {
     new: (...args: any[]) => Struct,
-    fmt: (self: Struct) => string
     eq: (lhs: Struct, rhs: Struct) => boolean
     isFinite: (self: Struct) => boolean
     isNan: (self: Struct) => boolean

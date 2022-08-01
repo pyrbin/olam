@@ -32,7 +32,7 @@ suite("mat3", () => {
     test("create identity matrix", () => {
         const m = mat3.identity();
         expect(mat3.eq(m, mat3.fromDiagonal(vec3(1, 1, 1)))).toBe(true);
-        expect(vec3.eq(mat3.diagonal(m), vec3(1, 1, 1))).toBe(true);
+        expect(vec3.eq(mat3.toDiagonal(m), vec3(1, 1, 1))).toBe(true);
     });
     test("create matrix from rotation", () => {
         const m1x = mat3.fromAxisAngle(vec3.right(), deg(180.0));
@@ -67,11 +67,11 @@ suite("mat3", () => {
 
         let result = mat3.transformVec2(m, vec2.up());
         expect(vec2.eq(result, vec2(-1.5, 0.0))).toBe(true);
-        expect(vec2.eq(result, mat3.mulVec3(m, vec3.up()))).toBe(true);
+        expect(vec2.eq(result, mat3.vmul3(m, vec3.up()))).toBe(true);
 
         result = mat3.transformPoint2(m, vec2.up());
         expect(vec2.eq(result, vec2(-0.5, 2.0))).toBe(true);
-        expect(vec2.eq(result, mat3.mulVec3(m, vec3(0, 1, 1)))).toBe(true)
+        expect(vec2.eq(result, mat3.vmul3(m, vec3(0, 1, 1)))).toBe(true)
     });
     test("add two matrices", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -91,15 +91,15 @@ suite("mat3", () => {
         const m3 = mat3.mul(m1, m2);
         expect(mat3.eq(m3, mat3(30, 36, 42, 66, 81, 96, 102, 126, 150))).toBe(true);
     });
-    test("multiply matrix by scalar", () => {
+    test("multiply matrix by scale", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
-        const m2 = mat3.scalar(m1, 2);
+        const m2 = mat3.scale(m1, 2);
         expect(mat3.eq(m2, mat3(2, 4, 6, 8, 10, 12, 14, 16, 18))).toBe(true);
     });
     test("multiply matrix by vector", () => {
         const m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
         const v1 = vec3(1, 2, 3);
-        const v2 = mat3.mulVec3(m1, v1);
+        const v2 = mat3.vmul3(m1, v1);
         expect(vec3.eq(v2, vec3(30, 36, 42))).toBe(true);
     });
     test("get column of matrix", () => {
