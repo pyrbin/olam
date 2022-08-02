@@ -52,6 +52,10 @@ export const mat2 = type.implement({
     copy(a: mat2, b: mat2): mat2 {
         return this.set(a, b.c0.x, b.c0.y, b.c1.x, b.c1.y);
     },
+    /** Returns a string representation  */
+    fmt(target: mat2) {
+        return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)}})`;
+    },
     /** Creates a 2x2 matrix from two column vectors. */
     fromCols(x: type.Vec2, y: type.Vec2, out = create()): mat2 {
         return this.set(out, x.x, x.y, y.x, y.y);

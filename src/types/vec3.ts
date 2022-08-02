@@ -48,6 +48,10 @@ export const vec3 = type.implement({
     copy(a: type.Vec3, b: type.Vec3): type.Vec3 {
         return this.set(a, b.x, b.y, b.z);
     },
+    /** Returns a string representation  */
+    fmt(target: type.Vec3) {
+        return `(${target.x}, ${target.y}, ${target.z})`;
+    },
     /** Create a vector from an array-like. */
     fromArray(array: ArrayLike<number>, out: type.Vec3 = create()): type.Vec3 {
         return this.set(out, array[0] as number, array[1] as number, array[2] as number);
@@ -215,6 +219,10 @@ export class Vec3 implements type.Vec3 {
     /** Copies properies from `src` */
     copy(src: type.Vec3): Vec3 {
         return vec3.copy(this, src) as Vec3;
+    }
+    /** Returns a string representation  */
+    toString() {
+        return vec3.fmt(this);
     }
     /** Returns each elemnt as an array. */
     toArray(): [x: number, y: number, z: number] {

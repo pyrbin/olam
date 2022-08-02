@@ -7,6 +7,7 @@ export function implement<T, Impl extends BaseImpl<T>>(impl: Impl): Type<T, Impl
 interface BaseImpl<Type> {
     new: (...args: any[]) => Type,
     eq: (lhs: Type, rhs: Type) => boolean,
+    fmt: (target: Type) => string,
 }
 
 /** Describes the exported object that contains implemented oprations for a type (eg. `Vec2`, `Quat` etc.) */

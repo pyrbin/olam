@@ -40,6 +40,10 @@ export const vec2 = type.implement({
     copy(a: type.Vec2, b: type.Vec2): type.Vec2 {
         return this.set(a, b.x, b.y);
     },
+    /** Returns a string representation  */
+    fmt(target: type.Vec2) {
+        return `(${target.x}, ${target.y})`;
+    },
     /** Create a vector from an array-like. */
     fromArray(array: ArrayLike<number>, out: type.Vec2 = create()): type.Vec2 {
         return this.set(out, array[0] as number, array[1] as number);
@@ -185,6 +189,10 @@ export class Vec2 implements type.Vec2 {
     /** Copies properies from `src` */
     copy(src: type.Vec2): Vec2 {
         return vec2.copy(this, src) as Vec2;
+    }
+    /** Returns a string representation  */
+    toString() {
+        return vec2.fmt(this);
     }
     /** Returns each elemnt as an array. */
     toArray(): [x: number, y: number] {

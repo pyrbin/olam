@@ -75,6 +75,10 @@ export const mat3 = type.implement({
             b.c1.x, b.c1.y, b.c1.z,
             b.c2.x, b.c2.y, b.c2.z);
     },
+    /** Returns a string representation  */
+    fmt(target: mat3) {
+        return `(${vec3.fmt(target.c0)},${vec3.fmt(target.c1)},${vec3.fmt(target.c2)})`;
+    },
     /** Creates a 3x3 matrix from three column vectors. */
     fromCols(x: type.Vec3, y: type.Vec3, z: type.Vec3, out = create()): mat3 {
         return this.set(out,

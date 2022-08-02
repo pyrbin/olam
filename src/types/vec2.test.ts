@@ -13,6 +13,10 @@ suite("vec2", () => {
         expect(v.x).toBe(1);
         expect(v.y).toBe(2);
     });
+    test("format a vector to a string", () => {
+        let v = vec2(1, 2);
+        expect(v.toString()).toBe("(1, 2)");
+    })
     test("add two vectors", () => {
         let v1 = vec2(1, 2);
         let v2 = vec2(3, 4);
