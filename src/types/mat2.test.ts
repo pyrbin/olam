@@ -72,7 +72,7 @@ suite("mat2", () => {
         let m = mat2(1, 2, 3, 2);
         expect(() => mat2.row(m, 2)).toThrow();
     });
-    test("compute determinant of a matrix", () => {
+    test("compute transpose of a matrix", () => {
         let m = mat2(1, 2, 3, 4);
         let m2 = mat2.transpose(m);
         expect(mat2.eq(m2, mat2(1, 3, 2, 4))).toBe(true);
