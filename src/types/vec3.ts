@@ -1,12 +1,11 @@
 import { epsilon, eqf, rsqrt, sincos } from "../math";
+import * as struct from "../struct";
 import { createType } from "../type";
 import { vec2 } from "./vec2";
 
 /** A 3-dimensional vector. */
-export interface vec3 {
-    x: number;
-    y: number;
-    z: number;
+export interface vec3 extends struct.Vec3 {
+
 }
 
 /** @interal */
@@ -70,19 +69,19 @@ export let vec3 = createType({
         return [target.x, target.y, target.z];
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy(target: vec3, out = vec2()): vec2 {
+    xy(target: vec3, out = vec2()): struct.Vec2 {
         return vec2.set(out, target.x, target.y);
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
-    trunc(target: vec3, out = vec2()): vec2 {
+    trunc(target: vec3, out = vec2()): struct.Vec2 {
         return this.xy(target, out);
     },
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz(target: vec3, out = vec2()): vec2 {
+    yz(target: vec3, out = vec2()): struct.Vec2 {
         return vec2.set(out, target.y, target.z);
     },
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz(target: vec3, out = vec2()): vec2 {
+    xz(target: vec3, out = vec2()): struct.Vec2 {
         return vec2.set(out, target.x, target.z);
     },
     /** Returns given `target` vector with `z` component set to zero. */

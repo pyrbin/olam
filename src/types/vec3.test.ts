@@ -139,4 +139,12 @@ suite("vec3", () => {
             expect(v2.z).toBe(0);
         });
     });
+    test("lerp two vectors", () => {
+        const v1 = vec3(1, 2, 3);
+        const v2 = vec3(4, 5, 6);
+        const v3 = vec3.lerp(v1, v2, 0.5);
+        expect(v3.x).toBe(2.5);
+        expect(v3.y).toBe(3.5);
+        expect(v3.z).toBe(4.5);
+    });
 });
