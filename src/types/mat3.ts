@@ -1,15 +1,13 @@
 import { assert, panic } from "../debug";
 import { eqf, recip, sincos } from "../math";
-import { createType } from "../type";
+import * as type from "../type";
 import { mat2 } from "./mat2";
 import { vec2 } from "./vec2";
 import { vec3 } from "./vec3";
 
 /** A 3x3 column major matrix. */
-export interface mat3 {
-    c0: vec3;
-    c1: vec3;
-    c2: vec3;
+export interface mat3 extends type.Mat3 {
+
 }
 
 /** @internal */
@@ -30,15 +28,14 @@ function create(
     };
 }
 
-/** Used in calculations to reduce GC */
+/** @internal */
 let tmp0 = vec3();
 let tmp1 = vec3();
 let tmp2 = vec3();
 let tmp3 = vec3();
 let tmpm20 = mat2();
 
-/** Implements math operations for a 3x3 column major matrix. */
-export const mat3 = createType({
+export const mat3 = type.implement({
     /** Create a new 3x3 matrix */
     new: create,
     /** Creates a matrix with all entries set to `0`. */
@@ -79,7 +76,7 @@ export const mat3 = createType({
             b.c2.x, b.c2.y, b.c2.z);
     },
     /** Creates a 3x3 matrix from three column vectors. */
-    fromCols(x: vec3, y: vec3, z: vec3, out = create()): mat3 {
+    fromCols(x: type.Vec3, y: type.Vec3, z: type.Vec3, out = create()): mat3 {
         return this.set(out,
             x.x, x.y, x.z,
             y.x, y.y, y.z,
@@ -101,14 +98,14 @@ export const mat3 = createType({
             out);
     },
     /** Creates a 3x3 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
-    fromDiagonal(diagonal: vec3, out = create()): mat3 {
+    fromDiagonal(diagonal: type.Vec3, out = create()): mat3 {
         return this.set(out,
             diagonal.x, 0, 0,
             0, diagonal.y, 0,
             0, 0, diagonal.z);
     },
     /** Creates a 3x3 rotation matrix from a rotation `axis` and angle `radians` */
-    fromAxisAngle(axis: vec3, radians: number, out = create()): mat3 {
+    fromAxisAngle(axis: type.Vec3, radians: number, out = create()): mat3 {
         assert(vec3.isNormalized(axis), "axis is not normalized");
         let [sin, cos] = sincos(radians);
         let [xsin, ysin, zsin] = vec3.toArray(vec3.scale(axis, sin));
@@ -152,7 +149,7 @@ export const mat3 = createType({
             out);
     },
     /** Creates an affine transformation matrix from given `translation` */
-    fromTranslation(translation: vec2, out = create()): mat3 {
+    fromTranslation(translation: type.Vec2, out = create()): mat3 {
         return this.fromCols(
             vec3.right(),
             vec3.up(),
@@ -169,7 +166,7 @@ export const mat3 = createType({
             out);
     },
     /** Creates an affine transformation matrix from given non-uniform `scale` */
-    fromScale(scale: vec2, out = create()): mat3 {
+    fromScale(scale: type.Vec2, out = create()): mat3 {
         assert(scale.x !== 0 || scale.y !== 0, "both scale vector components can't zero.");
         return this.fromCols(
             vec3(scale.x, 0, 0),
@@ -178,7 +175,7 @@ export const mat3 = createType({
             out);
     },
     /** Creates an affine transformation matrix from given `scale`, angle `radians` and `translation` */
-    fromScaleAngleTranslation(scale: vec2, radians: number, translation: vec2, out = create()): mat3 {
+    fromScaleAngleTranslation(scale: type.Vec2, radians: number, translation: type.Vec2, out = create()): mat3 {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
             vec3.set(tmp0, cos * scale.x, sin * scale.x, 0.0),
@@ -202,7 +199,7 @@ export const mat3 = createType({
         return [vec3.toArray(self.c0), vec3.toArray(self.c1), vec3.toArray(self.c2)];
     },
     /** Returns the diagonal entries of given matrix `self`. */
-    toDiagonal(self: mat3): vec3 {
+    toDiagonal(self: mat3): type.Vec3 {
         return vec3(self.c0.x, self.c1.y, self.c2.z);
     },
     /** Returns true if each entry of `self` is finite. */
@@ -227,7 +224,7 @@ export const mat3 = createType({
             vec3.add(lhs.c2, rhs.c2, tmp2),
             out);
     },
-    /** Substracts two matrices `lhs` and `rhs`. */
+    /** Subtracts two matrices `lhs` and `rhs`. */
     sub(lhs: mat3, rhs: mat3, out = create()): mat3 {
         return this.fromCols(
             vec3.sub(lhs.c0, rhs.c0, tmp0),
@@ -244,7 +241,7 @@ export const mat3 = createType({
             out)
     },
     /** Multiplies a matrix `lhs` and a 3d vector `rhs`. */
-    vmul3(lhs: mat3, rhs: vec3, out = vec3()): vec3 {
+    vmul3(lhs: mat3, rhs: type.Vec3, out = vec3()): type.Vec3 {
         vec3.scale(lhs.c0, rhs.x, out);
         vec3.add(out, vec3.scale(lhs.c1, rhs.y, tmp3), out);
         vec3.add(out, vec3.scale(lhs.c2, rhs.z, tmp3), out);
@@ -263,7 +260,7 @@ export const mat3 = createType({
         return vec3.eq(lhs.c0, rhs.c0) && vec3.eq(lhs.c1, rhs.c1) && vec3.eq(lhs.c2, rhs.c2);
     },
     /** Returns the column for given `index`. Throws if `index` is out of range. */
-    col(self: mat3, index: number): vec3 {
+    col(self: mat3, index: number): type.Vec3 {
         switch (index) {
             case 0: return self.c0;
             case 1: return self.c1;
@@ -272,7 +269,7 @@ export const mat3 = createType({
         }
     },
     /** Returns the row for given `index`. Throws if `index` is out of range. */
-    row(self: mat3, index: number): vec3 {
+    row(self: mat3, index: number): type.Vec3 {
         switch (index) {
             case 0: return vec3(self.c0.x, self.c1.x, self.c2.x);
             case 1: return vec3(self.c0.y, self.c1.y, self.c2.y);
@@ -308,11 +305,11 @@ export const mat3 = createType({
         return vec3.dot(self.c2, cross);
     },
     /** Transforms the given 2D vector as a point. Assumes that `self` is a valid affine transform */
-    transformPoint2(self: mat3, rhs: vec2, out = vec2()): vec2 {
+    transformPoint2(self: mat3, rhs: type.Vec2, out = vec2()): type.Vec2 {
         return vec2.add(this.transformVec2(self, rhs), vec3.xy(self.c2));
     },
     /** Rotates the given 2D vector. Assumes that `self` is valid a affine transform */
-    transformVec2(self: mat3, rhs: vec2, out = vec2()): vec2 {
+    transformVec2(self: mat3, rhs: type.Vec2, out = vec2()): type.Vec2 {
         return mat2.vmul2(mat2.fromCols(
             vec3.xy(self.c0, tmp0),
             vec3.xy(self.c1, tmp1),
