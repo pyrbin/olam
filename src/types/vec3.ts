@@ -6,46 +6,46 @@ export const vec3 = type.implement({
     /** Creates a 3-dimensional vector. */
     new: create,
     /** Creates a vector where each element is set to `0`. */
-    zero(): type.Vec3 {
+    zero(): Vec3 {
         return create(0);
     },
     /** Creates a vector where each element is set to `1`. */
-    one(): type.Vec3 {
+    one(): Vec3 {
         return create(1);
     },
     /** A unit-length vector pointing along the positive y-axis. */
-    up(): type.Vec3 {
+    up(): Vec3 {
         return create(0, 1, 0);
     },
     /** A unit-length vector pointing along the negative y-axis. */
-    down(): type.Vec3 {
+    down(): Vec3 {
         return create(0, -1, 0);
     },
     /** A unit-length vector pointing along the negative x-axis. */
-    left(): type.Vec3 {
+    left(): Vec3 {
         return create(-1, 0, 0);
     },
     /** A unit-length vector pointing along the positive x-axis. */
-    right(): type.Vec3 {
+    right(): Vec3 {
         return create(1, 0, 0);
     },
     /** A unit-length vector pointing along the negative z-axis. */
-    back(): type.Vec3 {
+    back(): Vec3 {
         return create(0, 0, -1);
     },
     /** A unit-length vector pointing along the positive z-axis. */
-    forward(): type.Vec3 {
+    forward(): Vec3 {
         return create(0, 0, 1);
     },
     /** Set properties of given vector `target` */
-    set(target: type.Vec3, x: number, y: number, z: number): type.Vec3 {
+    set<T extends type.Vec3>(target: T, x: number, y: number, z: number): T {
         target.x = x;
         target.y = y;
         target.z = z;
         return target;
     },
-    /** Copies properies from `b` to target vector `a` */
-    copy(a: type.Vec3, b: type.Vec3): type.Vec3 {
+    /** Copy properies from `b` to target vector `a` */
+    copy<T extends type.Vec3>(a: T, b: type.Vec3): T {
         return this.set(a, b.x, b.y, b.z);
     },
     /** Returns a string representation  */
@@ -53,32 +53,32 @@ export const vec3 = type.implement({
         return `(${target.x}, ${target.y}, ${target.z})`;
     },
     /** Create a vector from an array-like. */
-    fromArray(array: ArrayLike<number>, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, array[0] as number, array[1] as number, array[2] as number);
+    fromArray<T extends type.Vec3>(array: ArrayLike<number>, out?: T): T {
+        return this.set(out ?? create() ?? create(), array[0] as number, array[1] as number, array[2] as number) as T;
     },
     /** Returns each elemnt of `target` as an array. */
     toArray(target: type.Vec3): [x: number, y: number, z: number] {
         return [target.x, target.y, target.z];
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy(target: type.Vec3, out: type.Vec2 = vec2()): type.Vec2 {
-        return vec2.set(out, target.x, target.y);
+    xy<T extends type.Vec2>(target: type.Vec3, out?: T): T {
+        return vec2.set(out ?? create() ?? vec2(), target.x, target.y) as T;
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
-    trunc(target: type.Vec3, out: type.Vec2 = vec2()): type.Vec2 {
-        return this.xy(target, out);
+    trunc<T extends type.Vec2>(target: type.Vec3, out?: T): T {
+        return this.xy(target, out ?? vec2()) as T;
     },
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz(target: type.Vec3, out: type.Vec2 = vec2()): type.Vec2 {
-        return vec2.set(out, target.y, target.z);
+    yz<T extends type.Vec2>(target: type.Vec3, out?: T): T {
+        return vec2.set(out ?? create() ?? vec2(), target.y, target.z) as T;
     },
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz(target: type.Vec3, out: type.Vec2 = vec2()): type.Vec2 {
-        return vec2.set(out, target.x, target.z);
+    xz<T extends type.Vec2>(target: type.Vec3, out?: T): T {
+        return vec2.set(out ?? create() ?? vec2(), target.x, target.z) as T;
     },
     /** Returns given `target` vector with `z` component set to zero. */
-    xy0(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, target.x, target.y, 0);
+    xy0<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.set(out ?? create() ?? create(), target.x, target.y, 0) as T;
     },
     /** Returns true if each element of `target` is finite. */
     isFinite(target: type.Vec3): boolean {
@@ -93,44 +93,44 @@ export const vec3 = type.implement({
         return Math.abs(this.len2(target) - 1) <= epsilon;
     },
     /** Adds two vectors `lhs` and `rhs`. */
-    add(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+    add<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z) as T;
     },
     /** Subtracts two vectors `lhs` and `rhs`. */
-    sub(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+    sub<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z) as T;
     },
     /** Multiplies two vectors `lhs` and `rhs`. */
-    mul(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
+    mul<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z) as T;
     },
     /** Multiplies a vector `lhs` and a scale value `rhs`. */
-    scale(target: type.Vec3, scale: number, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, target.x * scale, target.y * scale, target.z * scale);
+    scale<T extends type.Vec3>(target: type.Vec3, scale: number, out?: T): T {
+        return this.set(out ?? create(), target.x * scale, target.y * scale, target.z * scale) as T;
     },
     /** Division between between two vectors `lhs` and `rhs`. */
-    div(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z);
+    div<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z) as T;
     },
     /** Check equality between two vectors `lhs` and `rhs`. */
     eq(lhs: type.Vec3, rhs: type.Vec3): boolean {
         return eqf(lhs.x, rhs.x) && eqf(lhs.y, rhs.y) && eqf(lhs.z, rhs.z);
     },
     /** Returns a vector containing the absolute value of each element of `target`. */
-    abs(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, Math.abs(target.x), Math.abs(target.y), Math.abs(target.z));
+    abs<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), Math.abs(target.x), Math.abs(target.y), Math.abs(target.z)) as T;
     },
     /** Returns a vector containing the negative value of each element of `target`. */
-    neg(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, -target.x, -target.y, -target.z);
+    neg<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), -target.x, -target.y, -target.z) as T;
     },
     /** Returns a vector containing the inverse value of each element of `target`. */
-    inv(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out, 1 / target.x, 1 / target.y, 1 / target.z);
+    inv<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.set(out ?? create(), 1 / target.x, 1 / target.y, 1 / target.z) as T;
     },
     /** Returns a vector that is equal to `target` rotated by 90 degrees. */
-    perp(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.rotate(target, deg(90), out);
+    perp<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.rotate(target, deg(90), out ?? create()) as T;
     },
     /** Returns the length for given vector */
     len(target: type.Vec3): number {
@@ -153,51 +153,51 @@ export const vec3 = type.implement({
         return this.len2(this.sub(lhs, rhs));
     },
     /** Returns `target` as a normalized vector. */
-    normalize(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.scale(target, rsqrt(this.dot(target, target)), out);
+    normalize<T extends type.Vec3>(target: type.Vec3, out?: T): T {
+        return this.scale(target, rsqrt(this.dot(target, target)), out ?? create()) as T;
     },
     /** Returns the normalized vector of `target` if possible, else `(0,0,0)`. */
-    normalizeSafe(target: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
+    normalizeSafe<T extends type.Vec3>(target: type.Vec3, out?: T): T {
         let rcp = this.rlen(target);
         if (rcp > 0.0 && isFinite(rcp)) {
-            return this.normalize(target, out);
+            return this.normalize(target, out ?? create()) as T;
         }
-        return this.set(out, 0, 0, 0);
+        return this.set(out ?? create(), 0, 0, 0) as T;
     },
     /** Returns the dot product of given two vectors. */
     dot(lhs: type.Vec3, rhs: type.Vec3): number {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
     },
     /** Returns the cross product of given two vectors. */
-    cross(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.set(out,
+    cross<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.set(out ?? create(),
             lhs.y * rhs.z - lhs.z * rhs.y,
             lhs.z * rhs.x - lhs.x * rhs.z,
-            lhs.x * rhs.y - lhs.y * rhs.x);
+            lhs.x * rhs.y - lhs.y * rhs.x) as T;
     },
     /** Returns the vector projection of `lhs` onto `rhs`. */
-    project(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.scale(rhs, this.dot(lhs, rhs) / this.dot(rhs, rhs), out);
+    project<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.scale(rhs, this.dot(lhs, rhs) / this.dot(rhs, rhs), out ?? create()) as T;
     },
     /** Returns the reflection vector, given an incident vector `lhs` and a normal vector `rhs`. */
-    reflect(lhs: type.Vec3, rhs: type.Vec3, out: type.Vec3 = create()): type.Vec3 {
-        return this.sub(lhs, this.scale(rhs, 2 * this.dot(lhs, rhs), out));
+    reflect<T extends type.Vec3>(lhs: type.Vec3, rhs: type.Vec3, out?: T): T {
+        return this.sub(lhs, this.scale(rhs, 2 * this.dot(lhs, rhs), out ?? create()));
     },
     /** Returns the angle (in radians) between the two vectors. */
     angle(lhs: type.Vec3, rhs: type.Vec3): number {
         return Math.acos(this.dot(lhs, rhs) / Math.sqrt((this.len2(lhs) * this.len2(rhs))));
     },
     /** Returns a vector where `target` is rotated by an angle in radians. */
-    rotate(target: type.Vec3, radians: number, out: type.Vec3 = create()): type.Vec3 {
+    rotate<T extends type.Vec3>(target: type.Vec3, radians: number, out?: T): T {
         let [sin, cos] = sincos(radians)
-        return this.set(out,
+        return this.set(out ?? create(),
             target.x * cos - target.y * sin,
             target.x * sin + target.y * cos,
-            target.z);
+            target.z) as T;
     },
     /** Performs a linear interpolation between `a` and `b` based on the value `t`. */
-    lerp(a: type.Vec3, b: type.Vec3, t: number, out: type.Vec3 = create()): type.Vec3 {
-        return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out);
+    lerp<T extends type.Vec3>(a: type.Vec3, b: type.Vec3, t: number, out?: T): T {
+        return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out ?? create()) as T;
     }
 });
 
@@ -216,7 +216,7 @@ export class Vec3 implements type.Vec3 {
     set(x: number, y: number, z: number): Vec3 {
         return vec3.set(this, x, y, z) as Vec3;
     }
-    /** Copies properies from `src` */
+    /** Copy properies from `src` */
     copy(src: type.Vec3): Vec3 {
         return vec3.copy(this, src) as Vec3;
     }
@@ -229,24 +229,24 @@ export class Vec3 implements type.Vec3 {
         return vec3.toArray(this);
     }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy(out: type.Vec2 = this): type.Vec2 {
-        return vec2.set(out, this.x, this.y);
+    xy<T extends type.Vec2>(out?: T): T {
+        return vec2.set(out ?? this, this.x, this.y) as T;
     }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    trunc(out: type.Vec2 = this): type.Vec2 {
-        return vec3.xy(this, out);
+    trunc<T extends type.Vec2>(out?: T): T {
+        return vec3.xy(this, out ?? this) as T;
     }
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz(out: type.Vec2 = this): type.Vec2 {
-        return vec2.set(out, this.y, this.z);
+    yz<T extends type.Vec2>(out?: T): T {
+        return vec2.set(out ?? this, this.y, this.z) as T;
     }
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz(out: type.Vec2 = this): type.Vec2 {
-        return vec2.set(out, this.x, this.z);
+    xz<T extends type.Vec2>(out?: T): T {
+        return vec2.set(out ?? this, this.x, this.z) as T;
     }
     /** Returns vector with `z` component set to zero. */
-    xy0(out: type.Vec3 = create()): type.Vec3 {
-        return vec3.set(out, this.x, this.y, 0);
+    xy0<T extends type.Vec3>(out?: T): T {
+        return vec3.set(out ?? this, this.x, this.y, 0) as T;
     }
     /** Returns true if each element is finite. */
     isFinite(): boolean {

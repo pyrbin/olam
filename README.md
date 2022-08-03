@@ -1,10 +1,10 @@
 # ulm
-An object-based _micro_ linear algebra math library for game development.
+An object-based linear algebra math library for game development.
 
 ```ts
-import { vec3 } from "ulm";
+import { vec3, type Vec3 } from "ulm";
 
-let pos = vec3(0,0,0)
+let pos: Vec3 = vec3(0,0,0)
 
 pos.add(vec3(5,5,5))
    .scale(5)

@@ -68,7 +68,7 @@ export const mat3 = type.implement({
         target.c2.z = m22;
         return target;
     },
-    /** Copies properies from `b` to target matrix `a` */
+    /** Copy properies from `b` to target matrix `a` */
     copy(a: mat3, b: mat3): mat3 {
         return this.set(a,
             b.c0.x, b.c0.y, b.c0.z,
