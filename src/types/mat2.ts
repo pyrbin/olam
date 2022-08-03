@@ -1,13 +1,10 @@
+import { implementType } from "../base";
 import { assert, panic } from "../debug";
 import { eqf, recip, sincos } from "../math";
-import * as type from "../type";
 import { vec2 } from "./vec2";
 
-/** A 2x2 column major matrix. */
-export interface mat2 extends type.Mat2 {
-
-}
-
+/** 2x2 column major matrix. */
+export interface mat2 extends num2x2 { }
 
 /** @internal */
 function create(
@@ -25,7 +22,7 @@ function create(
 let tmp0 = vec2();
 let tmp1 = vec2();
 
-export const mat2 = type.implement({
+export const mat2 = implementType({
     /** Create a new 2x2 matrix */
     new: create,
     /** Creates a matrix with all entries set to `0`. */
@@ -57,7 +54,7 @@ export const mat2 = type.implement({
         return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)}})`;
     },
     /** Creates a 2x2 matrix from two column vectors. */
-    fromCols(x: type.Vec2, y: type.Vec2, out = create()): mat2 {
+    fromCols(x: num2, y: num2, out = create()): mat2 {
         return this.set(out, x.x, x.y, y.x, y.y);
     },
     /** Creates a 2x2 matrix from an array-like. */
@@ -69,11 +66,11 @@ export const mat2 = type.implement({
         return this.set(out, array[0][0], array[0][1], array[1][0], array[1][1]);
     },
     /** Creates a 2x2 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
-    fromDiagonal(diagonal: type.Vec2, out = create()): mat2 {
+    fromDiagonal(diagonal: num2, out = create()): mat2 {
         return this.set(out, diagonal.x, 0, 0, diagonal.y);
     },
     /** Creates a 2x2 matrix containing the combining non-uniform `scale` and rotation of `radians`. */
-    fromScaleAngle(scale: type.Vec2, radians: number, out = create()): mat2 {
+    fromScaleAngle(scale: num2, radians: number, out = create()): mat2 {
         let [sin, cos] = sincos(radians);
         return this.set(out, scale.x * cos, scale.x * sin, -scale.y * sin, scale.y * cos);
     },
@@ -91,7 +88,7 @@ export const mat2 = type.implement({
         return [vec2.toArray(target.c0), vec2.toArray(target.c1)];
     },
     /** Returns the diagonal entries of given matrix `target`. */
-    toDiagonal(target: mat2, out = vec2()): type.Vec2 {
+    toDiagonal(target: mat2, out = vec2()): num2 {
         return vec2.set(out, target.c0.x, target.c1.y);
     },
     /** Returns true if each entry of `target` is finite. */
@@ -128,7 +125,7 @@ export const mat2 = type.implement({
             out);
     },
     /** Multiplies a matrix `lhs` and a 2d vector `rhs`. */
-    vmul2(lhs: mat2, rhs: type.Vec2, out = vec2()): type.Vec2 {
+    vmul2(lhs: mat2, rhs: num2, out = vec2()): num2 {
         return vec2.set(out,
             lhs.c0.x * rhs.x + lhs.c1.x * rhs.y,
             lhs.c0.y * rhs.x + lhs.c1.y * rhs.y);
@@ -145,7 +142,7 @@ export const mat2 = type.implement({
         return vec2.eq(lhs.c0, rhs.c0) && vec2.eq(lhs.c1, rhs.c1);
     },
     /** Returns the column for given `index`. Throws if `index` is out of range. */
-    col(target: mat2, index: number): type.Vec2 {
+    col(target: mat2, index: number): num2 {
         switch (index) {
             case 0: return target.c0;
             case 1: return target.c1;
@@ -153,7 +150,7 @@ export const mat2 = type.implement({
         }
     },
     /** Returns the row for given `index`. Throws if `index` is out of range. */
-    row(target: mat2, index: number): type.Vec2 {
+    row(target: mat2, index: number): num2 {
         switch (index) {
             case 0: return vec2(target.c0.x, target.c1.x);
             case 1: return vec2(target.c0.y, target.c1.y);
