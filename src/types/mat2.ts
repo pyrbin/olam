@@ -3,27 +3,11 @@ import { assert, panic } from "../debug";
 import { eqf, recip, sincos } from "../math";
 import { vec2 } from "./vec2";
 
-/** 2x2 column major matrix. */
-export interface mat2 extends num2x2 { }
-
-/** @internal */
-function create(
-    m00: number = 0,
-    m01: number = m00,
-    m10: number = m01,
-    m11: number = m10): mat2 {
-    return {
-        c0: vec2(m00, m01),
-        c1: vec2(m10, m11),
-    };
-}
-
-/** @internal */
-let tmp0 = vec2();
-let tmp1 = vec2();
+/** A 2x2 column major matrix. */
+export interface mat2 extends Mat2 { }
 
 export const mat2 = implementType({
-    /** Create a new 2x2 matrix */
+    /** Creates a 2x2 matrix */
     new: create,
     /** Creates a matrix with all entries set to `0`. */
     zero(): mat2 {
@@ -34,11 +18,11 @@ export const mat2 = implementType({
         return create(1, 0, 0, 1);
     },
     /** Set properties of given matrix `target` */
-    set(target: mat2,
+    set<T extends num2x2>(target: T,
         m00: number = 0,
         m01: number = m00,
         m10: number = m01,
-        m11: number = m10): mat2 {
+        m11: number = m10): T {
         target.c0.x = m00;
         target.c0.y = m01;
         target.c1.x = m10;
@@ -46,103 +30,103 @@ export const mat2 = implementType({
         return target;
     },
     /** Copy properies from `b` to target matrix `a` */
-    copy(a: mat2, b: mat2): mat2 {
+    copy<T extends num2x2>(a: T, b: num2x2): T {
         return this.set(a, b.c0.x, b.c0.y, b.c1.x, b.c1.y);
     },
     /** Returns a string representation  */
-    fmt(target: mat2) {
-        return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)}})`;
+    fmt(target: num2x2) {
+        return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)})`;
     },
     /** Creates a 2x2 matrix from two column vectors. */
-    fromCols(x: num2, y: num2, out = create()): mat2 {
-        return this.set(out, x.x, x.y, y.x, y.y);
+    fromCols<T extends num2x2>(x: num2, y: num2, out?: T): T {
+        return this.set(out ?? create(), x.x, x.y, y.x, y.y) as T;
     },
     /** Creates a 2x2 matrix from an array-like. */
-    fromArray(array: ArrayLike<number>, out = create()): mat2 {
-        return this.set(out, array[0], array[1], array[2], array[3]);
+    fromArray<T extends num2x2>(array: ArrayLike<number>, out?: T): T {
+        return this.set(out ?? create(), array[0], array[1], array[2], array[3]) as T;
     },
     /** Creates a 2x2 matrix from an 2d array. */
-    fromArray2d(array: [ArrayLike<number>, ArrayLike<number>], out = create()): mat2 {
-        return this.set(out, array[0][0], array[0][1], array[1][0], array[1][1]);
+    fromArray2d<T extends num2x2>(array: [ArrayLike<number>, ArrayLike<number>], out?: T): T {
+        return this.set(out ?? create(), array[0][0], array[0][1], array[1][0], array[1][1]) as T;
     },
     /** Creates a 2x2 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
-    fromDiagonal(diagonal: num2, out = create()): mat2 {
-        return this.set(out, diagonal.x, 0, 0, diagonal.y);
+    fromDiagonal<T extends num2x2>(diagonal: num2, out?: T): T {
+        return this.set(out ?? create(), diagonal.x, 0, 0, diagonal.y) as T;
     },
     /** Creates a 2x2 matrix containing the combining non-uniform `scale` and rotation of `radians`. */
-    fromScaleAngle(scale: num2, radians: number, out = create()): mat2 {
+    fromScaleAngle<T extends num2x2>(scale: num2, radians: number, out?: T): T {
         let [sin, cos] = sincos(radians);
-        return this.set(out, scale.x * cos, scale.x * sin, -scale.y * sin, scale.y * cos);
+        return this.set(out ?? create(), scale.x * cos, scale.x * sin, -scale.y * sin, scale.y * cos) as T;
     },
     /** Creates a 2x2 matrix containing a rotation of `radians`. */
-    fromAngle(radians: number, out = create()): mat2 {
+    fromAngle<T extends num2x2>(radians: number, out?: T): T {
         let [sin, cos] = sincos(radians);
-        return this.set(out, cos, sin, -sin, cos);
+        return this.set(out ?? create(), cos, sin, -sin, cos) as T;
     },
     /** Returns an array storing data in column major order. */
-    toColsArray(target: mat2): ColsArray {
+    toColsArray(target: num2x2): ColsArray {
         return [target.c0.x, target.c0.y, target.c1.x, target.c1.y];
     },
     /** Returns a 2d array storing data in column major order. */
-    toColsArray2d(target: mat2): ColsArray2d {
+    toColsArray2d(target: num2x2): ColsArray2d {
         return [vec2.toArray(target.c0), vec2.toArray(target.c1)];
     },
     /** Returns the diagonal entries of given matrix `target`. */
-    toDiagonal(target: mat2, out = vec2()): num2 {
-        return vec2.set(out, target.c0.x, target.c1.y);
+    toDiagonal<T extends num2>(target: num2x2, out?: T): T {
+        return vec2.set(out ?? vec2(), target.c0.x, target.c1.y) as T;
     },
     /** Returns true if each entry of `target` is finite. */
-    isFinite(target: mat2): boolean {
+    isFinite(target: num2x2): boolean {
         return vec2.isFinite(target.c0) && vec2.isFinite(target.c1);
     },
     /** Returns true if any entry of `target` is NaN. */
-    isNan(target: mat2): boolean {
+    isNan(target: num2x2): boolean {
         return vec2.isNan(target.c0) || vec2.isNan(target.c1);
     },
     /** Returns true if `target` is an identity matrix */
-    isIdentity(target: mat2): boolean {
+    isIdentity(target: num2x2): boolean {
         return eqf(target.c0.x, 1) && eqf(target.c0.y, 0) && eqf(target.c1.x, 0) && eqf(target.c1.y, 1);
     },
     /** Adds two matrices `lhs` and `rhs`. */
-    add(lhs: mat2, rhs: mat2, out = create()): mat2 {
+    add<T extends num2x2>(lhs: num2x2, rhs: num2x2, out?: T): T {
         return this.fromCols(
-            vec2.add(lhs.c0, rhs.c0, tmp0),
-            vec2.add(lhs.c1, rhs.c1, tmp1),
+            vec2.add(lhs.c0, rhs.c0, v1),
+            vec2.add(lhs.c1, rhs.c1, v2),
             out);
     },
     /** Subtracts two matrices `lhs` and `rhs`. */
-    sub(lhs: mat2, rhs: mat2, out = create()): mat2 {
+    sub<T extends num2x2>(lhs: num2x2, rhs: num2x2, out?: T): T {
         return this.fromCols(
-            vec2.sub(lhs.c0, rhs.c0, tmp0),
-            vec2.sub(lhs.c1, rhs.c1, tmp1),
+            vec2.sub(lhs.c0, rhs.c0, v1),
+            vec2.sub(lhs.c1, rhs.c1, v2),
             out);
     },
     /** Multiplies two matrices `lhs` and `rhs`. */
-    mul(lhs: mat2, rhs: mat2, out = create()): mat2 {
+    mul<T extends num2x2>(lhs: num2x2, rhs: num2x2, out?: T): T {
         return this.fromCols(
-            this.vmul2(lhs, rhs.c0, tmp0),
-            this.vmul2(lhs, rhs.c1, tmp1),
+            this.vmul2(lhs, rhs.c0, v1),
+            this.vmul2(lhs, rhs.c1, v2),
             out);
     },
     /** Multiplies a matrix `lhs` and a 2d vector `rhs`. */
-    vmul2(lhs: mat2, rhs: num2, out = vec2()): num2 {
-        return vec2.set(out,
+    vmul2<T extends vec2>(lhs: num2x2, rhs: num2, out?: T): T {
+        return vec2.set(out ?? vec2(),
             lhs.c0.x * rhs.x + lhs.c1.x * rhs.y,
-            lhs.c0.y * rhs.x + lhs.c1.y * rhs.y);
+            lhs.c0.y * rhs.x + lhs.c1.y * rhs.y) as T;
     },
     /** Multiplies a matrix `lhs` and a scale value `rhs`. */
-    scale(lhs: mat2, rhs: number, out = create()): mat2 {
+    scale<T extends num2x2>(lhs: num2x2, rhs: number, out?: T): T {
         return this.fromCols(
-            vec2.scale(lhs.c0, rhs, tmp0),
-            vec2.scale(lhs.c1, rhs, tmp1),
+            vec2.scale(lhs.c0, rhs, v1),
+            vec2.scale(lhs.c1, rhs, v2),
             out);
     },
     /** Check equality between two matrices `lhs` and `rhs`. */
-    eq(lhs: mat2, rhs: mat2): boolean {
+    eq(lhs: num2x2, rhs: num2x2): boolean {
         return vec2.eq(lhs.c0, rhs.c0) && vec2.eq(lhs.c1, rhs.c1);
     },
     /** Returns the column for given `index`. Throws if `index` is out of range. */
-    col(target: mat2, index: number): num2 {
+    col<T extends num2x2>(target: T, index: number): T["c0" | "c1"] {
         switch (index) {
             case 0: return target.c0;
             case 1: return target.c1;
@@ -150,7 +134,7 @@ export const mat2 = implementType({
         }
     },
     /** Returns the row for given `index`. Throws if `index` is out of range. */
-    row(target: mat2, index: number): num2 {
+    row<T extends num2x2>(target: T, index: number): vec2 {
         switch (index) {
             case 0: return vec2(target.c0.x, target.c1.x);
             case 1: return vec2(target.c0.y, target.c1.y);
@@ -158,29 +142,141 @@ export const mat2 = implementType({
         }
     },
     /** Returns the inverse matrix of the matrix `target`. Throws if the determinant of `target` is zero */
-    inv(target: mat2, out = create()): mat2 {
+    inv<T extends num2x2>(target: num2x2, out?: T): T {
         let det = this.det(target);
         assert(det !== 0, "can't invert matrix with zero determinant");
         let inv = recip(det);
         return this.fromCols(
-            vec2.set(tmp0, inv * target.c1.y, -inv * target.c0.y),
-            vec2.set(tmp1, -inv * target.c1.x, inv * target.c0.x),
+            vec2.set(v1, inv * target.c1.y, -inv * target.c0.y),
+            vec2.set(v2, -inv * target.c1.x, inv * target.c0.x),
             out);
     },
     /** Returns the transpose of the matrix `target`. */
-    transpose(target: mat2, out = create()): mat2 {
+    transpose<T extends num2x2>(target: num2x2, out?: T): T {
         return this.fromCols(
-            vec2.set(tmp0, target.c0.x, target.c1.x),
-            vec2.set(tmp1, target.c0.y, target.c1.y),
+            vec2.set(v1, target.c0.x, target.c1.x),
+            vec2.set(v2, target.c0.y, target.c1.y),
             out);
     },
     /** Returns the determinant of the matrix `target`. */
-    det(target: mat2): number {
+    det(target: num2x2): number {
         return target.c0.x * target.c1.y - target.c0.y * target.c1.x;
     },
 })
 
-/** Describes every entry of a 2x2 matrix as a single array */
+/** @internal */
+class Mat2 implements num2x2 {
+    c0: vec2;
+    c1: vec2;
+    /** Creates a 2x2 matrix */
+    constructor(
+        m00: number = 0,
+        m01: number = m00,
+        m10: number = m01,
+        m11: number = m10) {
+        this.c0 = vec2(m00, m01);
+        this.c1 = vec2(m10, m11);
+    }
+    /** Set properties */
+    set(
+        m00: number = 0,
+        m01: number = m00,
+        m10: number = m01,
+        m11: number = m10): mat2 {
+        return mat2.set(this, m00, m01, m10, m11);
+    }
+    /** Copy properies from `src` */
+    copy(src: num2x2) {
+        return mat2.copy(this, src);
+    }
+    /** Returns a string representation  */
+    toString() {
+        return mat2.fmt(this);
+    }
+    /** Returns an array storing data in column major order. */
+    toColsArray(): ColsArray {
+        return mat2.toColsArray(this);
+    }
+    /** Returns a 2d array storing data in column major order. */
+    toColsArray2d(): ColsArray2d {
+        return mat2.toColsArray2d(this)
+    }
+    /** Returns the diagonal entries. */
+    toDiagonal<T extends num2>(out?: T): T {
+        return mat2.toDiagonal(this, out ?? vec2()) as T;
+    }
+    /** Returns true if each entry is finite. */
+    isFinite(): boolean {
+        return mat2.isFinite(this);
+    }
+    /** Returns true if any entry is NaN. */
+    isNan(): boolean {
+        return mat2.isNan(this);
+    }
+    /** Returns true if this is an identity matrix */
+    isIdentity(): boolean {
+        return mat2.isIdentity(this)
+    }
+    /** Adds `rhs` to `this`. */
+    add(rhs: num2x2): this {
+        return mat2.add(this, rhs, this);
+    }
+    /** Subtracts `rhs` from `this`. */
+    sub(rhs: num2x2): this {
+        return mat2.sub(this, rhs, this);
+    }
+    /** Multiplies `rhs` with `this`. */
+    mul(rhs: num2x2): this {
+        return mat2.mul(this, rhs, this);
+    }
+    /** Multiplies 2d vector `rhs` with `this`. */
+    vmul2<T extends vec2>(rhs: num2, out?: T): T {
+        return mat2.vmul2(this, rhs, out) as T;
+    }
+    /** Multiplies the matrix by a scalar. */
+    scale(rhs: number): this {
+        return mat2.scale(this, rhs, this);
+    }
+    /** Check equality between two matrices `this` and `rhs`. */
+    eq(rhs: num2x2): boolean {
+        return mat2.eq(this, rhs);
+    }
+    /** Returns the column for given `index`. Throws if `index` is out of range. */
+    col(index: number): vec2 {
+        return mat2.col(this, index);
+    }
+    /** Returns the row for given `index`. Throws if `index` is out of range. */
+    row(index: number): vec2 {
+        return mat2.row(this, index);
+    }
+    /** Inverse the matrix. Throws if the determinant is zero */
+    inv(): this {
+        return mat2.inv(this, this);
+    }
+    /** Transpose the matrix. */
+    transpose(): this {
+        return mat2.transpose(this, this);
+    }
+    /** Returns the determinant. */
+    det(): number {
+        return mat2.det(this);
+    }
+}
+
+/** Creates a 2x2 matrix */
+function create(
+    m00: number = 0,
+    m01: number = m00,
+    m10: number = m01,
+    m11: number = m10): mat2 {
+    return new Mat2(m00, m01, m10, m11);
+}
+
+/** @internal */
+let v1 = vec2();
+let v2 = vec2();
+
+/** @internal */
 type ColsArray = [
     m00: number,
     m01: number,
@@ -188,7 +284,7 @@ type ColsArray = [
     m11: number
 ];
 
-/** Describes every entry of a 2x2 matrix as a 2-d array */
+/** @internal */
 type ColsArray2d = [
     c0: [ColsArray[0], ColsArray[1]],
     c1: [ColsArray[2], ColsArray[3]]

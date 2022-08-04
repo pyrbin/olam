@@ -57,7 +57,7 @@ export const vec3 = implementType({
     },
     /** Create a vector from an array-like. */
     fromArray<T extends num3>(array: ArrayLike<number>, out?: T): T {
-        return this.set(out ?? create() ?? create(), array[0] as number, array[1] as number, array[2] as number) as T;
+        return this.set(out ?? create(), array[0] as number, array[1] as number, array[2] as number) as T;
     },
     /** Returns each elemnt of `target` as an array. */
     toArray(target: num3): [x: number, y: number, z: number] {
@@ -65,7 +65,7 @@ export const vec3 = implementType({
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
     xy<T extends num2>(target: num3, out?: T): T {
-        return vec2.set(out ?? create() ?? vec2(), target.x, target.y) as T;
+        return vec2.set(out ?? vec2(), target.x, target.y) as T;
     },
     /** Returns `x` and `y` components as a 2-dim vector. */
     trunc<T extends num2>(target: num3, out?: T): T {
@@ -73,15 +73,15 @@ export const vec3 = implementType({
     },
     /** Returns `y` and `z` components as a 2-dim vector. */
     yz<T extends num2>(target: num3, out?: T): T {
-        return vec2.set(out ?? create() ?? vec2(), target.y, target.z) as T;
+        return vec2.set(out ?? vec2(), target.y, target.z) as T;
     },
     /** Returns `x` and `z` components as a 2-dim vector. */
     xz<T extends num2>(target: num3, out?: T): T {
-        return vec2.set(out ?? create() ?? vec2(), target.x, target.z) as T;
+        return vec2.set(out ?? vec2(), target.x, target.z) as T;
     },
     /** Returns given `target` vector with `z` component set to zero. */
     xy0<T extends num3>(target: num3, out?: T): T {
-        return this.set(out ?? create() ?? create(), target.x, target.y, 0) as T;
+        return this.set(out ?? create(), target.x, target.y, 0) as T;
     },
     /** Returns true if each element of `target` is finite. */
     isFinite(target: num3): boolean {
@@ -178,13 +178,13 @@ export const vec3 = implementType({
             lhs.z * rhs.x - lhs.x * rhs.z,
             lhs.x * rhs.y - lhs.y * rhs.x) as T;
     },
-    /** Returns the vector projection of `lhs` onto `rhs`. */
+    /** Returns the vector projection of `self` onto `rhs`. */
     project<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
-        return this.scale(rhs, this.dot(lhs, rhs) / this.dot(rhs, rhs), out ?? create()) as T;
+        return vec3.scale(rhs, vec3.dot(lhs, rhs) / vec3.dot(rhs, rhs), out ?? create()) as T;
     },
-    /** Returns the reflection vector, given an incident vector `lhs` and a normal vector `rhs`. */
-    reflect<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
-        return this.sub(lhs, this.scale(rhs, 2 * this.dot(lhs, rhs), out ?? create()));
+    /** Returns the vector rejection of `lhs` from `rhs`. */
+    reject<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+        return this.sub(lhs, this.project(lhs, rhs, out), out) as T;
     },
     /** Returns the angle (in radians) between the . */
     angle(lhs: num3, rhs: num3): number {
@@ -216,12 +216,12 @@ class Vec3 implements num3 {
         this.z = z;
     }
     /** Set properties of this vector */
-    set(x: number, y: number, z: number): vec3 {
-        return vec3.set(this, x, y, z) as vec3;
+    set(x: number, y: number, z: number): this {
+        return vec3.set(this, x, y, z);
     }
     /** Copy properies from `src` */
-    copy(src: num3): vec3 {
-        return vec3.copy(this, src) as vec3;
+    copy(src: num3): this {
+        return vec3.copy(this, src);
     }
     /** Returns a string representation  */
     toString() {
@@ -263,45 +263,45 @@ class Vec3 implements num3 {
     isNormalized(): boolean {
         return vec3.isNormalized(this);
     }
-    /** Adds `rhs` to `target`. */
-    add(rhs: num3): vec3 {
-        return vec3.add(this, rhs) as vec3;
+    /** Adds `rhs` to `this`. */
+    add(rhs: num3): this {
+        return vec3.add(this, rhs, this);
     }
     /** Subtracts `rhs` from `this`. */
-    sub(rhs: num3): vec3 {
-        return vec3.sub(this, rhs) as vec3;
+    sub(rhs: num3): this {
+        return vec3.sub(this, rhs, this);
     }
     /** Multiplies the vector by a scalar. */
-    mul(rhs: num3): vec3 {
-        return vec3.mul(this, rhs) as vec3;
+    mul(rhs: num3): this {
+        return vec3.mul(this, rhs, this);
     }
     /** Scales the vector by `rhs`. */
-    scale(scale: number): vec3 {
-        return vec3.scale(this, scale) as vec3;
+    scale(scale: number): this {
+        return vec3.scale(this, scale, this);
     }
     /** Divides `this` by `rhs`. */
-    div(rhs: num3): vec3 {
-        return vec3.div(this, rhs) as vec3;
+    div(rhs: num3): this {
+        return vec3.div(this, rhs, this);
     }
     /** Check equality between `this` and `rhs`. */
     eq(rhs: num3): boolean {
         return vec3.eq(this, rhs);
     }
     /** Set vector to absolute values. */
-    abs(): vec3 {
-        return vec3.abs(this) as vec3;
+    abs(): this {
+        return vec3.abs(this, this);
     }
     /** Negates the vector.*/
-    neg(): vec3 {
-        return vec3.neg(this) as vec3;
+    neg(): this {
+        return vec3.neg(this, this);
     }
     /** Inverse vector */
-    inv(): vec3 {
-        return vec3.inv(this) as vec3;
+    inv(): this {
+        return vec3.inv(this, this);
     }
     /** Rotate vector by 90 degrees */
-    perp(): vec3 {
-        return vec3.perp(this) as vec3;
+    perp(): this {
+        return vec3.perp(this, this);
     }
     /** Returns the length. */
     len(): number {
@@ -324,44 +324,44 @@ class Vec3 implements num3 {
         return vec3.dist2(this, rhs);
     }
     /** Normalizes the vector. */
-    normalize(): vec3 {
-        return vec3.normalize(this) as vec3;
+    normalize(): this {
+        return vec3.normalize(this, this);
     }
     /** Safely normalizes `this` if possible, else `(0,0)`. */
-    normalizeSafe(): vec3 {
-        return vec3.normalizeSafe(this) as vec3;
+    normalizeSafe(): this {
+        return vec3.normalizeSafe(this, this);
     }
     /** Dot product of `this` & `rhs`. */
     dot(rhs: num3): number {
         return vec3.dot(this, rhs);
     }
     /** Cross product of `this` & `rhs`. */
-    cross(rhs: num3): vec3 {
-        return vec3.cross(this, rhs) as vec3;
+    cross(rhs: num3): this {
+        return vec3.cross(this, rhs, this);
     }
     /** Project `this` onto `rhs`. */
-    project(rhs: num3): vec3 {
-        return vec3.project(this, rhs) as vec3;
+    project(rhs: num3): this {
+        return vec3.project(this, rhs, this);
     }
-    /** Computes the reflection vector, given an incident vector `this` and a normal vector `rhs`. */
-    reflect(rhs: num3): vec3 {
-        return vec3.reflect(this, rhs) as vec3;
+    /** Rejection of `this` from `rhs`. */
+    reject(rhs: num3): this {
+        return vec3.reject(this, rhs, this);
     }
     /** Returns the angle (in radians) between `this` and `rhs`. */
     angle(rhs: num3): number {
         return vec3.angle(this, rhs);
     }
     /** Rotate by an angle in radians. */
-    rotate(radians: number): vec3 {
-        return vec3.rotate(this, radians) as vec3;
+    rotate(radians: number): this {
+        return vec3.rotate(this, radians, this);
     }
     /** Performs a linear interpolation between `this` and `target` based on the value `t`. */
-    lerp(target: num3, t: number): vec3 {
-        return vec3.lerp(this, target, t) as vec3;
+    lerp(target: num3, t: number): this {
+        return vec3.lerp(this, target, t, this);
     }
 }
 
-/** @internal */
+/** Creates a 3-dimensional vector. */
 function create(x: number = 0, y: number = x, z: number = y): vec3 {
     return new Vec3(x, y, z);
 }

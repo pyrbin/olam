@@ -20,6 +20,11 @@ suite("vec3", () => {
         let v = vec3(1, 2, 3);
         expect(v.toString()).toBe("(1, 2, 3)");
     })
+    test("check nan, infinitiy", () => {
+        let v = vec3(1, 2, 3);
+        expect(v.isNan()).toBe(false);
+        expect(v.isFinite()).toBe(true);
+    });
     test("add two vectors", () => {
         let v1 = vec3(1, 2, 3);
         let v2 = vec3(4, 5, 6);
@@ -105,11 +110,17 @@ suite("vec3", () => {
         let angle = v1.angle(v2);
         expect(angle).toBe(Math.PI / 2);
     });
-    test("reflect a vector onto a normal", () => {
-        let v1 = vec3(1, 0, 0);
-        let n = vec3(0, 1, 0);
-        let v2 = v1.reflect(n);
-        expect(v2.x).toBe(1);
+    test("project a vector", () => {
+        let v1 = vec3(1, 1, 0);
+        let v2 = v1.project(vec3(0, 2, 0));
+        expect(v2.x).toBe(0);
+        expect(v2.y).toBe(1);
+        expect(v2.z).toBe(0);
+    });
+    test("reject a vector", () => {
+        let v1 = vec3(0, 0, 0);
+        let v2 = v1.reject(vec3(-1.2, -1.3, 3.1));
+        expect(v2.x).toBe(0);
         expect(v2.y).toBe(0);
         expect(v2.z).toBe(0);
     });

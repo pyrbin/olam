@@ -153,10 +153,10 @@ export const vec2 = implementType({
     },
     /** Returns the vector projection of `lhs` onto `rhs`. */
     project<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return this.scale(rhs, this.dot(lhs, rhs), out ?? create()) as T;
+        return vec2.scale(rhs, vec2.dot(lhs, rhs) / vec2.dot(rhs, rhs), out ?? create()) as T;
     },
-    /** Returns the reflection vector, given an incident vector `lhs` and a normal vector `rhs`. */
-    reflect<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
+    /** Returns the vector rejection of `lhs` from `rhs`. */
+    reject<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
         assert(this.isNormalized(rhs), "must be normalized");
         return this.sub(lhs, this.project(lhs, rhs, v1), out ?? create()) as T;
     },
@@ -186,12 +186,12 @@ class Vec2 implements num2 {
         this.y = y;
     }
     /** Set properties of this vector */
-    set(x: number, y: number): vec2 {
-        return vec2.set(this, x, y) as vec2;
+    set(x: number, y: number): this {
+        return vec2.set(this, x, y);
     }
     /** Copy properies from `src` */
-    copy(src: num2): vec2 {
-        return vec2.copy(this, src) as vec2;
+    copy(src: num2): this {
+        return vec2.copy(this, src);
     }
     /** Returns a string representation  */
     toString() {
@@ -217,45 +217,45 @@ class Vec2 implements num2 {
     isNormalized(): boolean {
         return vec2.isNormalized(this);
     }
-    /** Adds `rhs` to `target`. */
-    add(rhs: num2): vec2 {
-        return vec2.add(this, rhs, this) as vec2;
+    /** Adds `rhs` to `this`. */
+    add(rhs: num2): this {
+        return vec2.add(this, rhs, this);
     }
     /** Subtracts `rhs` from `this`. */
-    sub(rhs: num2): vec2 {
-        return vec2.sub(this, rhs, this) as vec2;
+    sub(rhs: num2): this {
+        return vec2.sub(this, rhs, this);
     }
     /** Multiplies the vector by a scalar. */
-    mul(rhs: num2): vec2 {
-        return vec2.mul(this, rhs, this) as vec2;
+    mul(rhs: num2): this {
+        return vec2.mul(this, rhs, this);
     }
     /** Scales the vector by `rhs`. */
-    scale(rhs: number): vec2 {
-        return vec2.scale(this, rhs, this) as vec2;
+    scale(rhs: number): this {
+        return vec2.scale(this, rhs, this);
     }
     /** Divides `this` by `rhs`. */
-    div(rhs: num2): vec2 {
-        return vec2.div(this, rhs, this) as vec2;
+    div(rhs: num2): this {
+        return vec2.div(this, rhs, this);
     }
     /** Check equality between `this` and `rhs`. */
     eq(rhs: num2): boolean {
         return vec2.eq(this, rhs);
     }
     /** Set vector to absolute values. */
-    abs(): vec2 {
-        return vec2.abs(this, this) as vec2;
+    abs(): this {
+        return vec2.abs(this, this);
     }
     /** Negates the vector.*/
-    neg(): vec2 {
-        return vec2.neg(this, this) as vec2;
+    neg(): this {
+        return vec2.neg(this, this);
     }
     /** Inverse vector */
     inv() {
-        return vec2.inv(this, this) as vec2;
+        return vec2.inv(this, this);
     }
     /** Rotate vector by 90 degrees */
-    perp(): vec2 {
-        return vec2.perp(this, this) as vec2;
+    perp(): this {
+        return vec2.perp(this, this);
     }
     /** Returns the length. */
     len(): number {
@@ -278,12 +278,12 @@ class Vec2 implements num2 {
         return vec2.dist2(this, rhs);
     }
     /** Normalizes the vector. */
-    normalize(): vec2 {
-        return vec2.normalize(this, this) as vec2;
+    normalize(): this {
+        return vec2.normalize(this, this);
     }
     /** Safely normalizes `this` if possible, else `(0,0)`. */
-    normalizeSafe(): vec2 {
-        return vec2.normalizeSafe(this, this) as vec2;
+    normalizeSafe(): this {
+        return vec2.normalizeSafe(this, this);
     }
     /** Dot product of `this` & `rhs`. */
     dot(rhs: num2): number {
@@ -294,28 +294,28 @@ class Vec2 implements num2 {
         return vec2.cross(this, rhs);
     }
     /** Project `this` onto `rhs`. */
-    project(rhs: num2): vec2 {
-        return vec2.project(this, rhs, this) as vec2;
+    project(rhs: num2): this {
+        return vec2.project(this, rhs, this);
     }
-    /** Computes the reflection vector, given an incident vector `this` and a normal vector `rhs`. */
-    reflect(rhs: num2): vec2 {
-        return vec2.reflect(this, rhs, this) as vec2;
+    /** Rejection of `this` from `rhs`. */
+    reject(rhs: num2): this {
+        return vec2.reject(this, rhs, this);
     }
     /** Returns the angle (in radians) between `this` and `rhs`. */
     angle(rhs: num2): number {
         return vec2.angle(this, rhs);
     }
     /** Rotate by an angle in radians. */
-    rotate(angle: number): vec2 {
-        return vec2.rotate(this, angle, this) as vec2;
+    rotate(angle: number): this {
+        return vec2.rotate(this, angle, this);
     }
     /** Performs a linear interpolation between `this` and `target` based on the value `t`. */
-    lerp(target: vec2, t: number): vec2 {
-        return vec2.lerp(this, target, t, this) as vec2;
+    lerp(target: vec2, t: number): this {
+        return vec2.lerp(this, target, t, this);
     }
 }
 
-/** @internal */
+/** Creates a 2-dimensional vector. */
 function create(x: number = 0, y: number = x): vec2 {
     return new Vec2(x, y);
 }
