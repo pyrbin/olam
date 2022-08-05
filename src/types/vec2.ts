@@ -1,6 +1,6 @@
 import { implementType } from "../base";
 import { assert } from "../debug";
-import { deg, epsilon, eqf, recip, rsqrt, sincos } from "../math";
+import { deg, epsilon, feq, recip, rsqrt, sincos } from "../math";
 import { vec3 } from "./vec3";
 
 /** A 2-dimensional vector.*/
@@ -49,7 +49,7 @@ export const vec2 = implementType({
     },
     /** Create a vector from an array-like. */
     fromArray<T extends num2>(array: ArrayLike<number>, out?: T): T {
-        return this.set(out ?? create(), array[0] as number, array[1] as number) as T;
+        return this.set(out ?? vec2(), array[0] as number, array[1] as number) as T;
     },
     /** Returns each elemnt of `target` as an array. */
     toArray(target: num2): [x: number, y: number] {
@@ -73,43 +73,43 @@ export const vec2 = implementType({
     },
     /** Adds `lhs` and `rhs`. */
     add<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return this.set(out ?? create(), lhs.x + rhs.x, lhs.y + rhs.y) as T;
+        return this.set(out ?? vec2(), lhs.x + rhs.x, lhs.y + rhs.y) as T;
     },
     /** Subtracts `lhs` and `rhs`. */
     sub<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return this.set(out ?? create(), lhs.x - rhs.x, lhs.y - rhs.y) as T;
+        return this.set(out ?? vec2(), lhs.x - rhs.x, lhs.y - rhs.y) as T;
     },
     /** Multiplies `lhs` and `rhs`. */
     mul<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return this.set(out ?? create(), lhs.x * rhs.x, lhs.y * rhs.y) as T;
+        return this.set(out ?? vec2(), lhs.x * rhs.x, lhs.y * rhs.y) as T;
     },
     /** Multiplies a vector `lhs` and a scale value `rhs`. */
     scale<T extends num2>(lhs: num2, rhs: number, out?: T): T {
-        return this.set(out ?? create(), lhs.x * rhs, lhs.y * rhs) as T;
+        return this.set(out ?? vec2(), lhs.x * rhs, lhs.y * rhs) as T;
     },
     /** Division between `lhs` and `rhs`. */
     div<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return this.set(out ?? create(), lhs.x / rhs.x, lhs.y / rhs.y) as T;
+        return this.set(out ?? vec2(), lhs.x / rhs.x, lhs.y / rhs.y) as T;
     },
     /** Check equality between `lhs` and `rhs`. */
     eq(lhs: num2, rhs: num2): boolean {
-        return eqf(lhs.x, rhs.x) && eqf(lhs.y, rhs.y);
+        return feq(lhs.x, rhs.x) && feq(lhs.y, rhs.y);
     },
     /** Returns a vector containing the absolute value of each element of `target`. */
     abs<T extends num2>(target: num2, out?: T): T {
-        return this.set(out ?? create(), Math.abs(target.x), Math.abs(target.y)) as T;
+        return this.set(out ?? vec2(), Math.abs(target.x), Math.abs(target.y)) as T;
     },
     /** Returns a vector containing the negative value of each element of `target`. */
     neg<T extends num2>(target: num2, out?: T): T {
-        return this.set(out ?? create(), -target.x, -target.y) as T;
+        return this.set(out ?? vec2(), -target.x, -target.y) as T;
     },
     /** Returns a vector containing the inverse value of each element of `target`. */
     inv<T extends num2>(target: num2, out?: T): T {
-        return this.set(out ?? create(), recip(target.x), recip(target.y)) as T;
+        return this.set(out ?? vec2(), recip(target.x), recip(target.y)) as T;
     },
     /** Returns a vector that is equal to `target` rotated by 90 degrees. */
     perp<T extends num2>(target: num2, out?: T): T {
-        return this.rotate(target, deg(90), out ?? create()) as T;
+        return this.rotate(target, deg(90), out);
     },
     /** Returns the length for given vector. */
     len(target: num2): number {
@@ -133,15 +133,15 @@ export const vec2 = implementType({
     },
     /** Returns `target` as a normalized vector. */
     normalize<T extends num2>(target: num2, out?: T): T {
-        return this.scale(target, recip(this.len(target)), out ?? create()) as T;
+        return this.scale(target, recip(this.len(target)), out);
     },
     /** Returns the normalized vector of `target` if possible, else `(0,0)`. */
     normalizeSafe<T extends num2>(target: num2, out?: T): T {
         let rcp = this.rlen(target);
         if (rcp > 0.0 && isFinite(rcp)) {
-            return this.normalize(target, out ?? create()) as T;
+            return this.normalize(target, out);
         }
-        return this.set(out ?? create(), 0, 0) as T;
+        return this.set(out ?? vec2(), 0, 0) as T;
     },
     /** Returns the dot product of given. */
     dot(lhs: num2, rhs: num2): number {
@@ -153,12 +153,12 @@ export const vec2 = implementType({
     },
     /** Returns the vector projection of `lhs` onto `rhs`. */
     project<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
-        return vec2.scale(rhs, vec2.dot(lhs, rhs) / vec2.dot(rhs, rhs), out ?? create()) as T;
+        return vec2.scale(rhs, vec2.dot(lhs, rhs) / vec2.dot(rhs, rhs), out);
     },
     /** Returns the vector rejection of `lhs` from `rhs`. */
     reject<T extends num2>(lhs: num2, rhs: num2, out?: T): T {
         assert(this.isNormalized(rhs), "must be normalized");
-        return this.sub(lhs, this.project(lhs, rhs, v1), out ?? create()) as T;
+        return this.sub(lhs, this.project(lhs, rhs, v1), out);
     },
     /** Returns the angle (in radians) between the. */
     angle(lhs: num2, rhs: num2): number {
@@ -168,11 +168,11 @@ export const vec2 = implementType({
     /** Returns a vector where `target` is rotated by an angle in radians. */
     rotate<T extends num2>(target: num2, radians: number, out?: T): T {
         let [sin, cos] = sincos(radians);
-        return this.set(out ?? create(), target.x * cos - target.y * sin, target.x * sin + target.y * cos) as T;
+        return this.set(out ?? vec2(), target.x * cos - target.y * sin, target.x * sin + target.y * cos) as T;
     },
     /** Performs a linear interpolation between `a` and `b` based on the value `t`. */
     lerp<T extends num2>(a: num2, b: num2, t: number, out?: T): T {
-        return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out ?? create()) as T;
+        return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out);
     }
 });
 
@@ -203,7 +203,7 @@ class Vec2 implements num2 {
     }
     /** Returns `this` as a 3-dimensional vector with given `z` value. */
     extend<T extends num3>(z: number = 0, out?: T): T {
-        return vec2.extend(this, z, out ?? vec3()) as T;
+        return vec2.extend(this, z, out);
     }
     /** Returns true if each element is finite. */
     isFinite(): boolean {

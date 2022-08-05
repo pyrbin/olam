@@ -1,7 +1,6 @@
 import { expect, suite, test } from "vitest";
-import { deg, eqf, recip } from "../math";
+import { deg, feq, recip } from "../math";
 import { vec2 } from '../mod';
-
 suite("vec2", () => {
     test("create a new vector", () => {
         let v = vec2(1, 2);
@@ -107,8 +106,8 @@ suite("vec2", () => {
         let v1 = vec2(1, 0);
         let n = vec2(0, 1);
         let v2 = v1.reject(n);
-        expect(eqf(v2.x, 1)).toBe(true);
-        expect(eqf(v2.y, 0)).toBe(true);
+        expect(feq(v2.x, 1)).toBe(true);
+        expect(feq(v2.y, 0)).toBe(true);
     });
     test("compute the distance between two vectors", () => {
         let v1 = vec2(3, 2);
@@ -132,8 +131,8 @@ suite("vec2", () => {
     test("rotate a vector", () => {
         let v1 = vec2(1, 0);
         v1.rotate(deg(90));
-        expect(eqf(v1.x, 0)).toBe(true);
-        expect(eqf(v1.y, 1)).toBe(true);
+        expect(feq(v1.x, 0)).toBe(true);
+        expect(feq(v1.y, 1)).toBe(true);
     });
     test("lerp two vectors", () => {
         let v1 = vec2(1, 2);

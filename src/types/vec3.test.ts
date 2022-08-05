@@ -1,5 +1,5 @@
 import { expect, suite, test } from "vitest";
-import { deg, eqf, recip } from "../math";
+import { deg, feq, recip } from "../math";
 import { vec2 } from "./vec2";
 import { vec3 } from "./vec3";
 
@@ -155,9 +155,9 @@ suite("vec3", () => {
     test("rotate a vector", () => {
         let v1 = vec3(1, 0, 0);
         let v2 = v1.rotate(deg(90));
-        expect(eqf(v2.x, 0)).toBe(true);
-        expect(eqf(v2.y, 1)).toBe(true);
-        expect(eqf(v2.z, 0)).toBe(true);
+        expect(feq(v2.x, 0)).toBe(true);
+        expect(feq(v2.y, 1)).toBe(true);
+        expect(feq(v2.z, 0)).toBe(true);
     });
     test("lerp two vectors", () => {
         let v1 = vec3(1, 2, 3);

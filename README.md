@@ -1,8 +1,9 @@
 # ulm
+
 An object-based linear algebra math library for game development.
 
 ```ts
-import { vec3 } from "ulm";
+import { vec2, vec3, mat2, mat3, affine3 } from "ulm";
 
 let pos: vec3 = vec3(0,0,0)
 
@@ -14,15 +15,10 @@ vec3.sub(pos, vec3(...pos.toArray()), pos)
 
 // (0,0,0)
 console.log(vec3)
-
 ```
 
 ## Features
-- vec2
-- vec3
-- vec4
-- mat2
-- mat3
-- mat4
-- affine2
-- affine3
+   * vectors: `vec2`, `vec3` and `vec4`
+   * matrices: `mat2`, `mat3` and `mat4`
+   * a quaternion type: `quat`
+   * affine transformation types: `affine2` and `affine3`

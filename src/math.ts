@@ -21,12 +21,12 @@ export function deg(degrees: Deg): Rad {
     return degrees * (Math.PI / 180.0);
 }
 
-/** Checks if two numbers are equal within an epsilon. */
-export function eqf(lhs: number, rhs: number): boolean {
+/** Checks if two float numbers are equal within an epsilon. */
+export function feq(lhs: number, rhs: number): boolean {
     return Math.abs(lhs - rhs) < epsilon;
 }
 
-/** Clamp a float to (min, max).*/
+/** Clamp a number to (min, max).*/
 export function clamp(x: number, min: number, max: number): number {
     return x < min ? min : x > max ? max : x;
 }
