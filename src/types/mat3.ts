@@ -192,6 +192,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
     static fmt(target: num3x3) {
         return `(${vec3.fmt(target.c0)},${vec3.fmt(target.c1)},${vec3.fmt(target.c2)})`;
     }
+    /** Returns an array storing data in column major order. */
     static toColsArray(target: num3x3): ColsArray {
         return [
             target.c0.x, target.c0.y, target.c0.z,
@@ -199,7 +200,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             target.c2.x, target.c2.y, target.c2.z];
     }
     /** Returns a 3d array storing data in column major order. */
-    static toColsArray2d(target: num3x3): ColsArray3d {
+    static toColsArray3d(target: num3x3): ColsArray3d {
         return [vec3.toArray(target.c0), vec3.toArray(target.c1), vec3.toArray(target.c2)];
     }
     /** Returns the diagonal entries of given matrix `target`. */
@@ -338,7 +339,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
     }
 });
 
-/** A 3x3 column major matrix. */
+/** @internal */
 class Mat3 implements num3x3 {
     c0: vec3;
     c1: vec3;
@@ -370,9 +371,13 @@ class Mat3 implements num3x3 {
     toString() {
         return mat3.fmt(this);
     }
+    /** Returns an array storing data in column major order. */
+    toColsArray(): ColsArray {
+        return mat3.toColsArray(this);
+    }
     /** Returns a 3d array storing data in column major order. */
-    toColsArray2d(target: num3x3): ColsArray3d {
-        return [vec3.toArray(target.c0), vec3.toArray(target.c1), vec3.toArray(target.c2)];
+    toColsArray3d(): ColsArray3d {
+        return mat3.toColsArray3d(this);
     }
     /** Returns the diagonal entries. */
     toDiagonal(): vec3
