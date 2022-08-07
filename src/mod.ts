@@ -1,3 +1,4 @@
+export * as math from "./math";
 export * from "./types/mat2";
 export * from "./types/mat3";
 export * from "./types/vec2";

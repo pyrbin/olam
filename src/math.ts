@@ -1,5 +1,5 @@
 /** Epsilon */
-export const epsilon = 1E-8;
+export let epsilon = 1E-8;
 
 /** Returns sin and cos of a number.*/
 export function sincos(value: number): [sin: number, cos: number] {
