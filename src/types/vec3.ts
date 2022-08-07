@@ -1,205 +1,251 @@
-import { implementType } from "../base";
+import { createImpl, Static } from "../base";
 import { deg, epsilon, feq, rsqrt, sincos } from "../math";
 import { vec2 } from "./vec2";
 
 /** A 3-dimensional vector.*/
 export interface vec3 extends Vec3 { };
 
-export const vec3 = implementType({
+export const vec3 = createImpl(class Vec3Impl extends Static {
     /** Creates a 3-dimensional vector. */
-    new: create,
+    static create(x: number = 0, y: number = x, z: number = y): vec3 {
+        return new Vec3(x, y, z);
+    }
     /** Creates a vector where each element is set to `0`. */
-    zero(): vec3 {
-        return create(0);
-    },
+    static zero(): vec3 {
+        return this.create(0);
+    }
     /** Creates a vector where each element is set to `1`. */
-    one(): vec3 {
-        return create(1);
-    },
-    /** A unit-length vector pointing along the positive y-axis. */
-    up(): vec3 {
-        return create(0, 1, 0);
-    },
-    /** A unit-length vector pointing along the negative y-axis. */
-    down(): vec3 {
-        return create(0, -1, 0);
-    },
-    /** A unit-length vector pointing along the negative x-axis. */
-    left(): vec3 {
-        return create(-1, 0, 0);
-    },
-    /** A unit-length vector pointing along the positive x-axis. */
-    right(): vec3 {
-        return create(1, 0, 0);
-    },
-    /** A unit-length vector pointing along the negative z-axis. */
-    back(): vec3 {
-        return create(0, 0, -1);
-    },
-    /** A unit-length vector pointing along the positive z-axis. */
-    forward(): vec3 {
-        return create(0, 0, 1);
-    },
+    static one(): vec3 {
+        return this.create(1);
+    }
+    /** Creates a unit-length vector pointing along the positive y-axis. */
+    static up(): vec3 {
+        return this.create(0, 1, 0);
+    }
+    /** Creates a unit-length vector pointing along the negative y-axis. */
+    static down(): vec3 {
+        return this.create(0, -1, 0);
+    }
+    /** Creates a unit-length vector pointing along the negative x-axis. */
+    static left(): vec3 {
+        return this.create(-1, 0, 0);
+    }
+    /** Creates a unit-length vector pointing along the positive x-axis. */
+    static right(): vec3 {
+        return this.create(1, 0, 0);
+    }
+    /** Creates a unit-length vector pointing along the negative z-axis. */
+    static back(): vec3 {
+        return this.create(0, 0, -1);
+    }
+    /** Creates a unit-length vector pointing along the positive z-axis. */
+    static forward(): vec3 {
+        return this.create(0, 0, 1);
+    }
     /** Set properties of given vector `target` */
-    set<T extends num3>(target: T, x: number, y: number, z: number): T {
-        target.x = x;
-        target.y = y;
-        target.z = z;
+    static set<T extends num3>(target: T, ...args: SetParams<typeof Vec3Impl>): T {
+        target.x = args[0];
+        target.y = args[1];
+        target.z = args[2];
         return target;
-    },
+    }
     /** Copy properies from `b` to target vector `a` */
-    copy<T extends num3>(a: T, b: num3): T {
+    static copy<T extends num3>(a: T, b: num3): T {
         return this.set(a, b.x, b.y, b.z);
-    },
+    }
     /** Returns a string representation  */
-    fmt(target: num3) {
+    static fmt(target: num3) {
         return `(${target.x}, ${target.y}, ${target.z})`;
-    },
+    }
     /** Create a vector from an array-like. */
-    fromArray<T extends num3>(array: ArrayLike<number>, out?: T): T {
-        return this.set(out ?? vec3(), array[0] as number, array[1] as number, array[2] as number) as T;
-    },
+    static fromArray(array: ArrayLike<number>): vec3
+    static fromArray<T extends num3>(array: ArrayLike<number>, out?: T): T
+    static fromArray<T extends num3>(array: ArrayLike<number>, out?: T) {
+        return this.set(out ?? vec3(), array[0] as number, array[1] as number, array[2] as number);
+    }
     /** Returns each elemnt of `target` as an array. */
-    toArray(target: num3): [x: number, y: number, z: number] {
+    static toArray(target: num3): [x: number, y: number, z: number] {
         return [target.x, target.y, target.z];
-    },
+    }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy<T extends num2>(target: num3, out?: T): T {
+    static xy(target: num3): vec2
+    static xy<T extends num2>(target: num3, out?: T): T
+    static xy<T extends num2>(target: num3, out?: T) {
         return vec2.set(out ?? vec2(), target.x, target.y) as T;
-    },
+    }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    trunc<T extends num2>(target: num3, out?: T): T {
+    static trunc(target: num3): vec2
+    static trunc<T extends num2>(target: num3, out?: T): T
+    static trunc<T extends num2>(target: num3, out?: T) {
         return this.xy(target, out) as T;
-    },
+    }
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz<T extends num2>(target: num3, out?: T): T {
+    static yz(target: num3): vec2
+    static yz<T extends num2>(target: num3, out?: T): T
+    static yz<T extends num2>(target: num3, out?: T) {
         return vec2.set(out ?? vec2(), target.y, target.z) as T;
-    },
+    }
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz<T extends num2>(target: num3, out?: T): T {
+    static xz(target: num3): vec2
+    static xz<T extends num2>(target: num3, out?: T): T
+    static xz<T extends num2>(target: num3, out?: T) {
         return vec2.set(out ?? vec2(), target.x, target.z) as T;
-    },
+    }
     /** Returns given `target` vector with `z` component set to zero. */
-    xy0<T extends num3>(target: num3, out?: T): T {
+    static xy0(target: num3): vec3
+    static xy0<T extends num3>(target: num3, out?: T): T
+    static xy0<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), target.x, target.y, 0) as T;
-    },
+    }
     /** Returns true if each element of `target` is finite. */
-    isFinite(target: num3): boolean {
+    static isFinite(target: num3): boolean {
         return isFinite(target.x) && isFinite(target.y) && isFinite(target.z);
-    },
+    }
     /** Returns true if any element of `target` is NaN. */
-    isNan(target: num3): boolean {
+    static isNan(target: num3): boolean {
         return isNaN(target.x) || isNaN(target.y) || isNaN(target.z);
-    },
+    }
     /** Returns true if given vector is normalized. */
-    isNormalized(target: num3): boolean {
+    static isNormalized(target: num3): boolean {
         return Math.abs(this.len2(target) - 1) <= epsilon;
-    },
+    }
     /** Adds `lhs` and `rhs`. */
-    add<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static add(lhs: num3, rhs: num3): vec3
+    static add<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static add<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.set(out ?? vec3(), lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z) as T;
-    },
+    }
     /** Subtracts `lhs` and `rhs`. */
-    sub<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static sub(lhs: num3, rhs: num3): vec3
+    static sub<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static sub<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.set(out ?? vec3(), lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z) as T;
-    },
+    }
     /** Multiplies `lhs` and `rhs`. */
-    mul<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static mul(lhs: num3, rhs: num3): vec3
+    static mul<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static mul<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.set(out ?? vec3(), lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z) as T;
-    },
+    }
     /** Multiplies a vector `lhs` and a scale value `rhs`. */
-    scale<T extends num3>(target: num3, scale: number, out?: T): T {
-        return this.set(out ?? vec3(), target.x * scale, target.y * scale, target.z * scale) as T;
-    },
+    static scale(lhs: num3, rhs: number): vec3
+    static scale<T extends num3>(lhs: num3, rhs: number, out?: T): T
+    static scale<T extends num3>(lhs: num3, scale: number, out?: T) {
+        return this.set(out ?? vec3(), lhs.x * scale, lhs.y * scale, lhs.z * scale) as T;
+    }
     /** Division between between `lhs` and `rhs`. */
-    div<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static div(lhs: num3, rhs: num3): vec3
+    static div<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static div<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.set(out ?? vec3(), lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z) as T;
-    },
+    }
     /** Check equality between `lhs` and `rhs`. */
-    eq(lhs: num3, rhs: num3): boolean {
+    static eq(lhs: num3, rhs: num3): boolean {
         return feq(lhs.x, rhs.x) && feq(lhs.y, rhs.y) && feq(lhs.z, rhs.z);
-    },
+    }
     /** Returns a vector containing the absolute value of each element of `target`. */
-    abs<T extends num3>(target: num3, out?: T): T {
+    static abs<T extends num3>(target: num3): vec3
+    static abs<T extends num3>(target: num3, out?: T): T
+    static abs<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), Math.abs(target.x), Math.abs(target.y), Math.abs(target.z)) as T;
-    },
+    }
     /** Returns a vector containing the negative value of each element of `target`. */
-    neg<T extends num3>(target: num3, out?: T): T {
+    static neg<T extends num3>(target: num3): vec3
+    static neg<T extends num3>(target: num3, out?: T): T
+    static neg<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), -target.x, -target.y, -target.z) as T;
-    },
+    }
     /** Returns a vector containing the inverse value of each element of `target`. */
-    inv<T extends num3>(target: num3, out?: T): T {
+    static inv<T extends num3>(target: num3): vec3
+    static inv<T extends num3>(target: num3, out?: T): T
+    static inv<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), 1 / target.x, 1 / target.y, 1 / target.z) as T;
-    },
+    }
     /** Returns a vector that is equal to `target` rotated by 90 degrees. */
-    perp<T extends num3>(target: num3, out?: T): T {
+    static perp<T extends num3>(target: num3): vec3
+    static perp<T extends num3>(target: num3, out?: T): T
+    static perp<T extends num3>(target: num3, out?: T) {
         return this.rotate(target, deg(90), out) as T;
-    },
+    }
     /** Returns the length for given vector */
-    len(target: num3): number {
+    static len(target: num3): number {
         return Math.sqrt(this.len2(target));
-    },
+    }
     /** Returns the length squared for given vector. */
-    len2(target: num3): number {
+    static len2(target: num3): number {
         return target.x * target.x + target.y * target.y + target.z * target.z;
-    },
+    }
     /** Computes `1.0 / len()` for given vector. */
-    rlen(target: num3): number {
+    static rlen(target: num3): number {
         return rsqrt(this.len2(target));
-    },
+    }
     /** Returns the euclidean distance between . */
-    dist(lhs: num3, rhs: num3): number {
+    static dist(lhs: num3, rhs: num3): number {
         return this.len(this.sub(lhs, rhs));
-    },
+    }
     /** Returns the euclidean distance squared between . */
-    dist2(lhs: num3, rhs: num3): number {
+    static dist2(lhs: num3, rhs: num3): number {
         return this.len2(this.sub(lhs, rhs));
-    },
+    }
     /** Returns `target` as a normalized vector. */
-    normalize<T extends num3>(target: num3, out?: T): T {
+    static normalize<T extends num3>(target: num3): vec3
+    static normalize<T extends num3>(target: num3, out?: T): T
+    static normalize<T extends num3>(target: num3, out?: T) {
         return this.scale(target, rsqrt(this.dot(target, target)), out) as T;
-    },
+    }
     /** Returns the normalized vector of `target` if possible, else `(0,0,0)`. */
-    normalizeSafe<T extends num3>(target: num3, out?: T): T {
+    static normalizeSafe<T extends num3>(target: num3): vec3
+    static normalizeSafe<T extends num3>(target: num3, out?: T): T
+    static normalizeSafe<T extends num3>(target: num3, out?: T) {
         let rcp = this.rlen(target);
         if (rcp > 0.0 && isFinite(rcp)) {
             return this.normalize(target, out) as T;
         }
         return this.set(out ?? vec3(), 0, 0, 0) as T;
-    },
+    }
     /** Returns the dot product of given . */
-    dot(lhs: num3, rhs: num3): number {
+    static dot(lhs: num3, rhs: num3): number {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
-    },
+    }
     /** Returns the cross product of given . */
-    cross<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static cross(lhs: num3, rhs: num3): vec3
+    static cross<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static cross<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.set(out ?? vec3(),
             lhs.y * rhs.z - lhs.z * rhs.y,
             lhs.z * rhs.x - lhs.x * rhs.z,
             lhs.x * rhs.y - lhs.y * rhs.x) as T;
-    },
+    }
     /** Returns the vector projection of `self` onto `rhs`. */
-    project<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static project(lhs: num3, rhs: num3): vec3
+    static project<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static project<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return vec3.scale(rhs, vec3.dot(lhs, rhs) / vec3.dot(rhs, rhs), out) as T;
-    },
+    }
     /** Returns the vector rejection of `lhs` from `rhs`. */
-    reject<T extends num3>(lhs: num3, rhs: num3, out?: T): T {
+    static reject(lhs: num3, rhs: num3): vec3
+    static reject<T extends num3>(lhs: num3, rhs: num3, out?: T): T
+    static reject<T extends num3>(lhs: num3, rhs: num3, out?: T) {
         return this.sub(lhs, this.project(lhs, rhs, out), out) as T;
-    },
+    }
     /** Returns the angle (in radians) between the . */
-    angle(lhs: num3, rhs: num3): number {
+    static angle(lhs: num3, rhs: num3): number {
         return Math.acos(this.dot(lhs, rhs) / Math.sqrt((this.len2(lhs) * this.len2(rhs))));
-    },
+    }
     /** Returns a vector where `target` is rotated by an angle in radians. */
-    rotate<T extends num3>(target: num3, radians: number, out?: T): T {
+    static rotate(target: num3, radians: number): vec3
+    static rotate<T extends num3>(target: num3, radians: number, out?: T): T
+    static rotate<T extends num3>(target: num3, radians: number, out?: T) {
         let [sin, cos] = sincos(radians)
         return this.set(out ?? vec3(),
             target.x * cos - target.y * sin,
             target.x * sin + target.y * cos,
             target.z) as T;
-    },
+    }
     /** Performs a linear interpolation between `a` and `b` based on the value `t`. */
-    lerp<T extends num3>(a: num3, b: num3, t: number, out?: T): T {
+    static lerp(a: num3, b: num3, t: number): vec3
+    static lerp<T extends num3>(a: num3, b: num3, t: number, out?: T): T
+    static lerp<T extends num3>(a: num3, b: num3, t: number, out?: T) {
         return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out) as T;
     }
 });
@@ -216,8 +262,8 @@ class Vec3 implements num3 {
         this.z = z;
     }
     /** Set properties of this vector */
-    set(x: number, y: number, z: number): this {
-        return vec3.set(this, x, y, z);
+    set(...args: SetParams<typeof vec3>): this {
+        return vec3.set(this, ...args);
     }
     /** Copy properies from `src` */
     copy(src: num3): this {
@@ -232,26 +278,34 @@ class Vec3 implements num3 {
         return vec3.toArray(this);
     }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy<T extends num2>(out?: T): T {
-        return vec2.set(out ?? this, this.x, this.y) as T;
+    xy<T extends num2>(): vec2
+    xy<T extends num2>(out?: T): T
+    xy<T extends num2>(out?: T) {
+        return vec2.set(out ?? vec2(), this.x, this.y) as T;
     }
-    /** Returns `x` and `y` components as a 2-dim vector. */
-    trunc<T extends num2>(out?: T): T {
+    /** Returns `x` and `y` components as a 2-dim vector. Defaults to `this` if no `out` parameter is given. */
+    trunc<T extends num2>(): vec2
+    trunc<T extends num2>(out?: T): T
+    trunc<T extends num2>(out?: T) {
         return vec3.xy(this, out ?? this) as T;
     }
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz<T extends num2>(out?: T): T {
-        return vec2.set(out ?? this, this.y, this.z) as T;
+    yz<T extends num2>(): vec2
+    yz<T extends num2>(out?: T): T
+    yz<T extends num2>(out?: T) {
+        return vec2.set(out ?? vec2(), this.y, this.z) as T;
     }
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz<T extends num2>(out?: T): T {
-        return vec2.set(out ?? this, this.x, this.z) as T;
+    xz<T extends num2>(): vec2
+    xz<T extends num2>(out?: T): T
+    xz<T extends num2>(out?: T) {
+        return vec2.set(out ?? vec2(), this.x, this.z) as T;
     }
     /** Returns vector with `z` component set to zero. */
-    xy0<T extends num3>(): this
+    xy0(): vec3
     xy0<T extends num3>(out?: T): T
-    xy0<T extends num3>(out?: T): T {
-        return vec3.set(out ?? this, this.x, this.y, 0) as T;
+    xy0<T extends num3>(out?: T) {
+        return vec3.set(out ?? vec3(), this.x, this.y, 0) as T;
     }
     /** Returns true if each element is finite. */
     isFinite(): boolean {
@@ -361,11 +415,6 @@ class Vec3 implements num3 {
     lerp(target: num3, t: number): this {
         return vec3.lerp(this, target, t, this);
     }
-}
-
-/** Creates a 3-dimensional vector. */
-function create(x: number = 0, y: number = x, z: number = y): vec3 {
-    return new Vec3(x, y, z);
 }
 
 /** @internal */

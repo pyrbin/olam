@@ -1,4 +1,4 @@
-import { createImpl } from "../base";
+import { createImpl, Static } from "../base";
 import { assert, panic } from "../debug";
 import { feq, recip, sincos } from "../math";
 import { vec2 } from "./vec2";
@@ -6,7 +6,7 @@ import { vec2 } from "./vec2";
 /** A 2x2 column major matrix. */
 export interface mat2 extends Mat2 { }
 
-export const mat2 = createImpl(class Mat2Impl extends null {
+export const mat2 = createImpl(class Mat2Impl extends Static {
     /** Creates a 2x2 matrix */
     static create(
         m00: number = 0,

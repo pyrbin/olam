@@ -1,4 +1,4 @@
-import { createImpl } from "../base";
+import { createImpl, Static } from "../base";
 import { assert, panic } from "../debug";
 import { feq, recip, sincos } from "../math";
 import { mat2 } from "./mat2";
@@ -8,7 +8,7 @@ import { vec3 } from "./vec3";
 /** A 3x3 column major matrix. */
 export interface mat3 extends Mat3 { }
 
-export const mat3 = createImpl(class Mat3Impl extends null {
+export const mat3 = createImpl(class Mat3Impl extends Static {
     /** Create a new 3x3 matrix */
     static create(
         m00: number = 0,
@@ -54,7 +54,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             array[6], array[7], array[8]);
     }
     /** Creates a 3x3 matrix from an 3d array. */
-    static fromArray3d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>]): mat3
+    static fromArray3d(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>]): mat3
     static fromArray3d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T): T
     static fromArray3d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T) {
         return this.fromCols(
@@ -64,7 +64,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates a 3x3 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
-    static fromDiagonal<T extends num3x3>(diagonal: num3): mat3
+    static fromDiagonal(diagonal: num3): mat3
     static fromDiagonal<T extends num3x3>(diagonal: num3, out?: T): T
     static fromDiagonal<T extends num3x3>(diagonal: num3, out?: T) {
         return this.set(out ?? mat3(),
@@ -73,7 +73,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             0, 0, diagonal.z);
     }
     /** Creates a 3x3 rotation matrix from a rotation `axis` and angle `radians` */
-    static fromAxisAngle<T extends num3x3>(axis: num3, radians: number): mat3
+    static fromAxisAngle(axis: num3, radians: number): mat3
     static fromAxisAngle<T extends num3x3>(axis: num3, radians: number, out?: T): T
     static fromAxisAngle<T extends num3x3>(axis: num3, radians: number, out?: T) {
         assert(vec3.isNormalized(axis), "axis is not normalized");
@@ -92,9 +92,9 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the x-axis */
-    static fromRotationX<T extends Maybe<num3x3>>(radians: number): mat3
-    static fromRotationX<T extends Maybe<num3x3>>(radians: number, out?: T): T
-    static fromRotationX<T extends Maybe<num3x3>>(radians: number, out?: T) {
+    static fromRotationX(radians: number): mat3
+    static fromRotationX<T extends num3x3>(radians: number, out?: T): T
+    static fromRotationX<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
             vec3.right(),
@@ -103,7 +103,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the y-axis */
-    static fromRotationY<T extends num3x3>(radians: number, out?: T): mat3
+    static fromRotationY(radians: number): mat3
     static fromRotationY<T extends num3x3>(radians: number, out?: T): T
     static fromRotationY<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
@@ -114,7 +114,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the z-axis */
-    static fromRotationZ<T extends num3x3>(radians: number): mat3
+    static fromRotationZ(radians: number): mat3
     static fromRotationZ<T extends num3x3>(radians: number, out?: T): T
     static fromRotationZ<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
@@ -125,7 +125,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates an affine transformation matrix from given `translation` */
-    static fromTranslation<T extends num3x3>(translation: num2): mat3
+    static fromTranslation(translation: num2): mat3
     static fromTranslation<T extends num3x3>(translation: num2, out?: T): T
     static fromTranslation<T extends num3x3>(translation: num2, out?: T) {
         return this.fromCols(
@@ -135,7 +135,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates an affine transformation matrix from given angle `radians` */
-    static fromAngle<T extends num3x3>(radians: number): mat3
+    static fromAngle(radians: number): mat3
     static fromAngle<T extends num3x3>(radians: number, out?: T): T
     static fromAngle<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
@@ -146,7 +146,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates an affine transformation matrix from given non-uniform `scale` */
-    static fromScale<T extends num3x3>(scale: num2): mat3
+    static fromScale(scale: num2): mat3
     static fromScale<T extends num3x3>(scale: num2, out?: T): T
     static fromScale<T extends num3x3>(scale: num2, out?: T) {
         assert(scale.x !== 0 || scale.y !== 0, "both scale vector components can't zero.");
@@ -157,7 +157,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates an affine transformation matrix from given `scale`, angle `radians` and `translation` */
-    static fromScaleAngleTranslation<T extends num3x3>(scale: num2, radians: number, translation: num2): mat3
+    static fromScaleAngleTranslation(scale: num2, radians: number, translation: num2): mat3
     static fromScaleAngleTranslation<T extends num3x3>(scale: num2, radians: number, translation: num2, out?: T): T
     static fromScaleAngleTranslation<T extends num3x3>(scale: num2, radians: number, translation: num2, out?: T) {
         let [sin, cos] = sincos(radians);
@@ -168,7 +168,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Creates an affine transformation matrix from the given 2x2 matrix. */
-    static fromMat2<T extends num3x3>(mat: mat2): mat3
+    static fromMat2(mat: mat2): mat3
     static fromMat2<T extends num3x3>(mat: mat2, out?: T): T
     static fromMat2<T extends num3x3>(mat: mat2, out?: T) {
         return this.fromCols(vec2.extend(mat.c0), vec2.extend(mat.c1), vec3.forward(), out);
@@ -224,7 +224,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             feq(target.c2.x, 0.0) && feq(target.c2.y, 0.0) && feq(target.c2.z, 1.0);
     }
     /** Adds two matrices `lhs` and `rhs`. */
-    static add<T extends num3x3>(lhs: num3x3, rhs: num3x3): mat3
+    static add(lhs: num3x3, rhs: num3x3): mat3
     static add<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T): T
     static add<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T) {
         return this.fromCols(
@@ -234,7 +234,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Subtracts two matrices `lhs` and `rhs`. */
-    static sub<T extends num3x3>(lhs: num3x3, rhs: num3x3): mat3
+    static sub(lhs: num3x3, rhs: num3x3): mat3
     static sub<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T): T
     static sub<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T) {
         return this.fromCols(
@@ -244,7 +244,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
             out);
     }
     /** Multiplies two matrices `lhs` and `rhs`. */
-    static mul<T extends num3x3>(lhs: num3x3, rhs: num3x3): mat3
+    static mul(lhs: num3x3, rhs: num3x3): mat3
     static mul<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T): T
     static mul<T extends num3x3>(lhs: num3x3, rhs: num3x3, out?: T) {
         return this.fromCols(
@@ -263,7 +263,7 @@ export const mat3 = createImpl(class Mat3Impl extends null {
         return out as T;
     }
     /** Multiplies a matrix `lhs` and a scale value `rhs`. */
-    static scale<T extends num3x3>(lhs: num3x3, rhs: number): mat3
+    static scale(lhs: num3x3, rhs: number): mat3
     static scale<T extends num3x3>(lhs: num3x3, rhs: number, out?: T): T
     static scale<T extends num3x3>(lhs: num3x3, rhs: number, out?: T) {
         return this.fromCols(
