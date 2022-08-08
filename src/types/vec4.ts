@@ -6,7 +6,7 @@ import { vec3 } from "./vec3";
 export interface vec4 extends Vec4 { };
 
 export const vec4 = createImpl(class Vec4Impl extends Static {
-    /** Creates a 2-dimensional vector with all elements set to `v`. */
+    /** Creates a 4-dimensional vector with all elements set to `v`. */
     // @ts-ignore
     static create(v: number = 0): vec4
     /** Creates a 4-dimensional vector. */
