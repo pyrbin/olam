@@ -22,7 +22,7 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
         return this.create(1, 0, 0, 0, 1, 0, 0, 0, 1);
     }
     /** Set properties of given matrix `target` */
-    static set<T extends num3x3>(target: T, ...args: SetParams<typeof Mat3Impl>): T {
+    static set<T extends num3x3>(target: T, ...args: SetParams<typeof mat3>): T {
         target.c0.x = args[0] ?? target.c0.x;
         target.c0.y = args[1] ?? target.c0.y;
         target.c0.z = args[2] ?? target.c0.z;
@@ -64,9 +64,9 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
             array[6], array[7], array[8]);
     }
     /** Creates a 3x3 matrix from an 3d array. */
-    static fromArray3d(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>]): mat3
-    static fromArray3d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T): T
-    static fromArray3d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T) {
+    static fromArray2d(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>]): mat3
+    static fromArray2d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T): T
+    static fromArray2d<T extends num3x3>(array: [ArrayLike<number>, ArrayLike<number>, ArrayLike<number>], out?: T) {
         return this.fromCols(
             vec3.fromArray(array[0], v1),
             vec3.fromArray(array[1], v2),
@@ -191,7 +191,7 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
             target.c2.x, target.c2.y, target.c2.z];
     }
     /** Returns a 3d array storing data in column major order. */
-    static toColsArray3d(target: num3x3): ColsArray3d {
+    static toColsArray2d(target: num3x3): ColsArray2d {
         return [vec3.toArray(target.c0), vec3.toArray(target.c1), vec3.toArray(target.c2)];
     }
     /** Returns the diagonal entries of given matrix `target`. */
@@ -358,8 +358,8 @@ class Mat3 implements num3x3 {
         return mat3.toColsArray(this);
     }
     /** Returns a 3d array storing data in column major order. */
-    toColsArray3d(): ColsArray3d {
-        return mat3.toColsArray3d(this);
+    toColsArray2d(): ColsArray2d {
+        return mat3.toColsArray2d(this);
     }
     /** Returns the diagonal entries. */
     toDiagonal(): vec3
@@ -460,7 +460,7 @@ type ColsArray = [
 ];
 
 /** @internal */
-type ColsArray3d = [
+type ColsArray2d = [
     c0: [ColsArray[0], ColsArray[1], ColsArray[2]],
     c1: [ColsArray[3], ColsArray[4], ColsArray[5]],
     c2: [ColsArray[6], ColsArray[7], ColsArray[8]]

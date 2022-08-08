@@ -48,7 +48,7 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
         return this.create(0, 0, 1);
     }
     /** Set properties of given vector `target` */
-    static set<T extends num3>(target: T, ...args: SetParams<typeof Vec3Impl>): T {
+    static set<T extends num3>(target: T, ...args: SetParams<typeof vec3>): T {
         target.x = args[0];
         target.y = args[1];
         target.z = args[2];

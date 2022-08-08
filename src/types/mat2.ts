@@ -20,7 +20,7 @@ export const mat2 = createImpl(class Mat2Impl extends Static {
         return this.create(1, 0, 0, 1);
     }
     /** Set properties of given matrix `target` */
-    static set<T extends num2x2>(target: T, ...args: SetParams<typeof Mat2Impl>) {
+    static set<T extends num2x2>(target: T, ...args: SetParams<typeof mat2>) {
         target.c0.x = args[0];
         target.c0.y = args[1];
         target.c1.x = args[2];
