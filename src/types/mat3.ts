@@ -10,17 +10,16 @@ export interface mat3 extends Mat3 { }
 
 export const mat3 = createImpl(class Mat3Impl extends Static {
     /** Create a new 3x3 matrix */
-    static create(
-        m00: number = 0,
-        m01: number = m00,
-        m02: number = m01,
-        m10: number = m02,
-        m11: number = m10,
-        m12: number = m11,
-        m20: number = m12,
-        m21: number = m20,
-        m22: number = m21): mat3 {
-        return new Mat3(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+    static create(...args: ColsArray): mat3 {
+        return new Mat3(...args);
+    }
+    /** Creates a matrix with all entries set to `0`. */
+    static zero(): mat3 {
+        return this.create(0, 0, 0, 0, 0, 0, 0, 0, 0);
+    }
+    /** Creates an identity matrix, where all diagonal elements are `1`, and all off-diagonal elements are `0`. */
+    static identity(): mat3 {
+        return this.create(1, 0, 0, 0, 1, 0, 0, 0, 1);
     }
     /** Set properties of given matrix `target` */
     static set<T extends num3x3>(target: T, ...args: SetParams<typeof Mat3Impl>): T {
@@ -35,11 +34,22 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
         target.c2.z = args[8] ?? target.c2.z;
         return target;
     }
+    /** Copy properties from `b` to target matrix `a` */
+    static copy<T extends num3x3>(a: T, b: num3x3) {
+        return this.set(a,
+            b.c0.x, b.c0.y, b.c0.z,
+            b.c1.x, b.c1.y, b.c1.z,
+            b.c2.x, b.c2.y, b.c2.z);
+    }
+    /** Returns a string representation  */
+    static fmt(target: num3x3) {
+        return `(${vec3.fmt(target.c0)},${vec3.fmt(target.c1)},${vec3.fmt(target.c2)})`;
+    }
     /** Creates a 3x3 matrix from three column vectors. */
     static fromCols(x: num3, y: num3, z: num3): mat3
     static fromCols<T extends num3x3>(x: num3, y: num3, z: num3, out?: T): T
     static fromCols<T extends num3x3>(x: num3, y: num3, z: num3, out?: T) {
-        return mat3.set(out ?? mat3(),
+        return mat3.set(out ?? mat3.zero(),
             x.x, x.y, x.z,
             y.x, y.y, y.z,
             z.x, z.y, z.z) as T;
@@ -48,7 +58,7 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromArray(array: ArrayLike<number>): mat3
     static fromArray<T extends num3x3>(array: ArrayLike<number>, out?: T): T
     static fromArray<T extends num3x3>(array: ArrayLike<number>, out?: T) {
-        return this.set(out ?? mat3(),
+        return this.set(out ?? mat3.zero(),
             array[0], array[1], array[2],
             array[3], array[4], array[5],
             array[6], array[7], array[8]);
@@ -67,7 +77,7 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromDiagonal(diagonal: num3): mat3
     static fromDiagonal<T extends num3x3>(diagonal: num3, out?: T): T
     static fromDiagonal<T extends num3x3>(diagonal: num3, out?: T) {
-        return this.set(out ?? mat3(),
+        return this.set(out ?? mat3.zero(),
             diagonal.x, 0, 0,
             0, diagonal.y, 0,
             0, 0, diagonal.z);
@@ -86,9 +96,9 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
         let xzomc = x * z * omc;
         let yzomc = y * z * omc;
         return this.fromCols(
-            vec3(x2 * omc + cos, xyomc + zsin, xzomc - ysin),
-            vec3(xyomc - zsin, y2 * omc + cos, yzomc + xsin),
-            vec3(xzomc + ysin, yzomc - xsin, z2 * omc + cos),
+            vec3.set(v1, x2 * omc + cos, xyomc + zsin, xzomc - ysin),
+            vec3.set(v2, xyomc - zsin, y2 * omc + cos, yzomc + xsin),
+            vec3.set(v3, xzomc + ysin, yzomc - xsin, z2 * omc + cos),
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the x-axis */
@@ -98,8 +108,8 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
             vec3.right(),
-            vec3(0, cos, sin),
-            vec3(0, -sin, cos),
+            vec3.set(v1, 0, cos, sin),
+            vec3.set(v2, 0, -sin, cos),
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the y-axis */
@@ -108,9 +118,9 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromRotationY<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, 0, -sin),
+            vec3.set(v1, cos, 0, -sin),
             vec3.up(),
-            vec3(sin, 0, cos),
+            vec3.set(v2, sin, 0, cos),
             out);
     }
     /** Creates a 3x3 rotation matrix from angle `radians` around the z-axis */
@@ -119,8 +129,8 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromRotationZ<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, sin, 0),
-            vec3(-sin, cos, 0),
+            vec3.set(v1, cos, sin, 0),
+            vec3.set(v2, -sin, cos, 0),
             vec3.forward(),
             out);
     }
@@ -131,7 +141,7 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
         return this.fromCols(
             vec3.right(),
             vec3.up(),
-            vec3(translation.x, translation.y, 1.0),
+            vec3.set(v1, translation.x, translation.y, 1.0),
             out);
     }
     /** Creates an affine transformation matrix from given angle `radians` */
@@ -140,8 +150,8 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromAngle<T extends num3x3>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
         return this.fromCols(
-            vec3(cos, sin, 0),
-            vec3(-sin, cos, 0),
+            vec3.set(v1, cos, sin, 0),
+            vec3.set(v2, -sin, cos, 0),
             vec3.forward(),
             out);
     }
@@ -151,8 +161,8 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromScale<T extends num3x3>(scale: num2, out?: T) {
         assert(scale.x !== 0 || scale.y !== 0, "both scale vector components can't zero.");
         return this.fromCols(
-            vec3(scale.x, 0, 0),
-            vec3(0, scale.y, 0),
+            vec3.set(v1, scale.x, 0, 0),
+            vec3.set(v2, 0, scale.y, 0),
             vec3.forward(),
             out);
     }
@@ -172,25 +182,6 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static fromMat2<T extends num3x3>(mat: mat2, out?: T): T
     static fromMat2<T extends num3x3>(mat: mat2, out?: T) {
         return this.fromCols(vec2.extend(mat.c0), vec2.extend(mat.c1), vec3.forward(), out);
-    }
-    /** Copy properies from `b` to target matrix `a` */
-    static copy<T extends num3x3>(a: T, b: num3x3) {
-        return this.set(a,
-            b.c0.x, b.c0.y, b.c0.z,
-            b.c1.x, b.c1.y, b.c1.z,
-            b.c2.x, b.c2.y, b.c2.z);
-    }
-    /** Creates a matrix with all entries set to `0`. */
-    static zero(): mat3 {
-        return this.create(0, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
-    /** Creates an identity matrix, where all diagonal elements are `1`, and all off-diagonal elements are `0`. */
-    static identity(): mat3 {
-        return this.create(1, 0, 0, 0, 1, 0, 0, 0, 1);
-    }
-    /** Returns a string representation  */
-    static fmt(target: num3x3) {
-        return `(${vec3.fmt(target.c0)},${vec3.fmt(target.c1)},${vec3.fmt(target.c2)})`;
     }
     /** Returns an array storing data in column major order. */
     static toColsArray(target: num3x3): ColsArray {
@@ -258,8 +249,8 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
     static vmul3<T extends num3>(lhs: num3x3, rhs: num3, out?: T): T
     static vmul3<T extends num3>(lhs: num3x3, rhs: num3, out?: T) {
         out = vec3.scale(lhs.c0, rhs.x, out);
-        vec3.add(out as T, vec3.scale(lhs.c1, rhs.y, v4), out);
-        vec3.add(out as T, vec3.scale(lhs.c2, rhs.z, v4), out);
+        vec3.add(out, vec3.scale(lhs.c1, rhs.y, v4), out);
+        vec3.add(out, vec3.scale(lhs.c2, rhs.z, v4), out);
         return out as T;
     }
     /** Multiplies a matrix `lhs` and a scale value `rhs`. */
@@ -345,25 +336,16 @@ class Mat3 implements num3x3 {
     c1: vec3;
     c2: vec3;
     /** Creates a 3x3 matrix */
-    constructor(
-        m00: number = 0,
-        m01: number = m00,
-        m02: number = m01,
-        m10: number = m02,
-        m11: number = m10,
-        m12: number = m11,
-        m20: number = m12,
-        m21: number = m20,
-        m22: number = m21) {
-        this.c0 = vec3(m00, m01, m02);
-        this.c1 = vec3(m10, m11, m12);
-        this.c2 = vec3(m20, m21, m22);
+    constructor(...args: ColsArray) {
+        this.c0 = vec3(args[0], args[1], args[2]);
+        this.c1 = vec3(args[3], args[4], args[5]);
+        this.c2 = vec3(args[6], args[7], args[8]);
     }
     /** Set properties. */
     set(...args: SetParams<typeof mat3>): this {
         return mat3.set(this, ...args) as this;
     }
-    /** Copy properies from `src`. */
+    /** Copy properties from `src`. */
     copy(src: num3x3): this {
         return mat2.copy(this, src);
     }
@@ -462,7 +444,7 @@ let v1 = vec3();
 let v2 = vec3();
 let v3 = vec3();
 let v4 = vec3();
-let m1 = mat2();
+let m1 = mat2.zero();
 
 /** @internal */
 type ColsArray = [

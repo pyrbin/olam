@@ -8,24 +8,8 @@ export interface mat2 extends Mat2 { }
 
 export const mat2 = createImpl(class Mat2Impl extends Static {
     /** Creates a 2x2 matrix */
-    static create(
-        m00: number = 0,
-        m01: number = m00,
-        m10: number = m01,
-        m11: number = m10): mat2 {
-        return new Mat2(m00, m01, m10, m11);
-    }
-    /** Set properties of given matrix `target` */
-    static set<T extends num2x2>(target: T, ...args: SetParams<typeof Mat2Impl>) {
-        target.c0.x = args[0];
-        target.c0.y = args[1];
-        target.c1.x = args[2];
-        target.c1.y = args[3];
-        return target;
-    }
-    /** Copy properies from `b` to target matrix `a` */
-    static copy<T extends num2x2>(a: T, b: num2x2): T {
-        return this.set(a, b.c0.x, b.c0.y, b.c1.x, b.c1.y);
+    static create(...args: ColsArray): mat2 {
+        return new Mat2(...args);
     }
     /** Creates a matrix with all entries set to `0`. */
     static zero(): mat2 {
@@ -35,6 +19,18 @@ export const mat2 = createImpl(class Mat2Impl extends Static {
     static identity(): mat2 {
         return this.create(1, 0, 0, 1);
     }
+    /** Set properties of given matrix `target` */
+    static set<T extends num2x2>(target: T, ...args: SetParams<typeof Mat2Impl>) {
+        target.c0.x = args[0];
+        target.c0.y = args[1];
+        target.c1.x = args[2];
+        target.c1.y = args[3];
+        return target;
+    }
+    /** Copy properties from `b` to target matrix `a` */
+    static copy<T extends num2x2>(a: T, b: num2x2): T {
+        return this.set(a, b.c0.x, b.c0.y, b.c1.x, b.c1.y);
+    }
     /** Returns a string representation  */
     static fmt(target: num2x2) {
         return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)})`;
@@ -43,39 +39,39 @@ export const mat2 = createImpl(class Mat2Impl extends Static {
     static fromCols(x: num2, y: num2): mat2
     static fromCols<T extends num2x2>(x: num2, y: num2, out?: T): T
     static fromCols<T extends num2x2>(x: num2, y: num2, out?: T) {
-        return this.set(out ?? mat2(), x.x, x.y, y.x, y.y);
+        return this.set(out ?? mat2.zero(), x.x, x.y, y.x, y.y);
     }
     /** Creates a 2x2 matrix from an array-like. */
     static fromArray(array: ArrayLike<number>): mat2
     static fromArray<T extends num2x2>(array: ArrayLike<number>, out?: T): T
     static fromArray<T extends num2x2>(array: ArrayLike<number>, out?: T) {
-        return this.set(out ?? mat2(), array[0], array[1], array[2], array[3]);
+        return this.set(out ?? mat2.zero(), array[0], array[1], array[2], array[3]);
     }
     /** Creates a 2x2 matrix from an 2d array. */
     static fromArray2d(array: [ArrayLike<number>, ArrayLike<number>]): mat2
     static fromArray2d<T extends num2x2>(array: [ArrayLike<number>, ArrayLike<number>], out?: T): T
     static fromArray2d<T extends num2x2>(array: [ArrayLike<number>, ArrayLike<number>], out?: T) {
-        return this.set(out ?? mat2(), array[0][0], array[0][1], array[1][0], array[1][1]) as T;
+        return this.set(out ?? mat2.zero(), array[0][0], array[0][1], array[1][0], array[1][1]) as T;
     }
     /** Creates a 2x2 matrix with its diagonal set to `diagonal` and all other entries set to 0. */
     static fromDiagonal(diagonal: num2): mat2
     static fromDiagonal<T extends num2x2>(diagonal: num2, out?: T): T
     static fromDiagonal<T extends num2x2>(diagonal: num2, out?: T) {
-        return this.set(out ?? mat2(), diagonal.x, 0, 0, diagonal.y);
+        return this.set(out ?? mat2.zero(), diagonal.x, 0, 0, diagonal.y);
     }
     /** Creates a 2x2 matrix containing the combining non-uniform `scale` and rotation of `radians`. */
     static fromScaleAngle(scale: num2, radians: number): mat2
     static fromScaleAngle<T extends num2x2>(scale: num2, radians: number, out?: T): T
     static fromScaleAngle<T extends num2x2>(scale: num2, radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
-        return this.set(out ?? mat2(), scale.x * cos, scale.x * sin, -scale.y * sin, scale.y * cos);
+        return this.set(out ?? mat2.zero(), scale.x * cos, scale.x * sin, -scale.y * sin, scale.y * cos);
     }
     /** Creates a 2x2 matrix containing a rotation of `radians`. */
     static fromAngle(radians: number): mat2
     static fromAngle<T extends num2x2>(radians: number, out?: T): T
     static fromAngle<T extends num2x2>(radians: number, out?: T) {
         let [sin, cos] = sincos(radians);
-        return this.set(out ?? mat2(), cos, sin, -sin, cos);
+        return this.set(out ?? mat2.zero(), cos, sin, -sin, cos);
     }
     /** Returns an array storing data in column major order. */
     static toColsArray(target: num2x2): ColsArray {
@@ -195,19 +191,15 @@ class Mat2 implements num2x2 {
     c0: vec2;
     c1: vec2;
     /** Creates a 2x2 matrix */
-    constructor(
-        m00: number = 0,
-        m01: number = m00,
-        m10: number = m01,
-        m11: number = m10) {
-        this.c0 = vec2(m00, m01);
-        this.c1 = vec2(m10, m11);
+    constructor(...args: ColsArray) {
+        this.c0 = vec2(args[0], args[1]);
+        this.c1 = vec2(args[2], args[3]);
     }
     /** Set properties. */
     set(...args: SetParams<typeof mat2>): mat2 {
         return mat2.set(this, ...args);
     }
-    /** Copy properies from `src`. */
+    /** Copy properties from `src`. */
     copy(src: num2x2) {
         return mat2.copy(this, src);
     }

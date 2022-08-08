@@ -1,14 +1,19 @@
 import { createImpl, Static } from "../base";
 import { deg, epsilon, feq, rsqrt, sincos } from "../math";
 import { vec2 } from "./vec2";
+import { vec4 } from "./vec4";
 
 /** A 3-dimensional vector.*/
 export interface vec3 extends Vec3 { };
 
 export const vec3 = createImpl(class Vec3Impl extends Static {
+    /** Creates a 3-dimensional vector with all elements set to `v`. */
+    // @ts-ignore
+    static create(v: number = 0): Vec3
     /** Creates a 3-dimensional vector. */
-    static create(x: number = 0, y: number = x, z: number = y): vec3 {
-        return new Vec3(x, y, z);
+    static create(x: number, y: number, z: number): Vec3
+    static create(x: number, y: number, z: number) {
+        return new Vec3(x, y ?? x, z ?? x);
     }
     /** Creates a vector where each element is set to `0`. */
     static zero(): vec3 {
@@ -49,7 +54,7 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
         target.z = args[2];
         return target;
     }
-    /** Copy properies from `b` to target vector `a` */
+    /** Copy properties from `b` to target vector `a` */
     static copy<T extends num3>(a: T, b: num3): T {
         return this.set(a, b.x, b.y, b.z);
     }
@@ -63,7 +68,7 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
     static fromArray<T extends num3>(array: ArrayLike<number>, out?: T) {
         return this.set(out ?? vec3(), array[0] as number, array[1] as number, array[2] as number);
     }
-    /** Returns each elemnt of `target` as an array. */
+    /** Returns each element of `target` as an array. */
     static toArray(target: num3): [x: number, y: number, z: number] {
         return [target.x, target.y, target.z];
     }
@@ -78,6 +83,11 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
     static trunc<T extends num2>(target: num3, out?: T): T
     static trunc<T extends num2>(target: num3, out?: T) {
         return this.xy(target, out) as T;
+    }
+    static extend(target: num4, w?: number): vec3
+    static extend<T extends num4>(target: num3, w?: number, out?: T): T
+    static extend<T extends num4>(target: num3, w?: number, out?: T) {
+        return vec4.set(out ?? vec4(), target.x, target.y, target.z, w ?? 0) as T;
     }
     /** Returns `y` and `z` components as a 2-dim vector. */
     static yz(target: num3): vec2
@@ -144,25 +154,25 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
         return feq(lhs.x, rhs.x) && feq(lhs.y, rhs.y) && feq(lhs.z, rhs.z);
     }
     /** Returns a vector containing the absolute value of each element of `target`. */
-    static abs<T extends num3>(target: num3): vec3
+    static abs(target: num3): vec3
     static abs<T extends num3>(target: num3, out?: T): T
     static abs<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), Math.abs(target.x), Math.abs(target.y), Math.abs(target.z)) as T;
     }
     /** Returns a vector containing the negative value of each element of `target`. */
-    static neg<T extends num3>(target: num3): vec3
+    static neg(target: num3): vec3
     static neg<T extends num3>(target: num3, out?: T): T
     static neg<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), -target.x, -target.y, -target.z) as T;
     }
     /** Returns a vector containing the inverse value of each element of `target`. */
-    static inv<T extends num3>(target: num3): vec3
+    static inv(target: num3): vec3
     static inv<T extends num3>(target: num3, out?: T): T
     static inv<T extends num3>(target: num3, out?: T) {
         return this.set(out ?? vec3(), 1 / target.x, 1 / target.y, 1 / target.z) as T;
     }
     /** Returns a vector that is equal to `target` rotated by 90 degrees. */
-    static perp<T extends num3>(target: num3): vec3
+    static perp(target: num3): vec3
     static perp<T extends num3>(target: num3, out?: T): T
     static perp<T extends num3>(target: num3, out?: T) {
         return this.rotate(target, deg(90), out) as T;
@@ -179,22 +189,22 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
     static rlen(target: num3): number {
         return rsqrt(this.len2(target));
     }
-    /** Returns the euclidean distance between . */
+    /** Returns the euclidean distance between `lhs` and `rhs`. */
     static dist(lhs: num3, rhs: num3): number {
         return this.len(this.sub(lhs, rhs));
     }
-    /** Returns the euclidean distance squared between . */
+    /** Returns the euclidean distance squared between `lhs` and `rhs`. */
     static dist2(lhs: num3, rhs: num3): number {
         return this.len2(this.sub(lhs, rhs));
     }
     /** Returns `target` as a normalized vector. */
-    static normalize<T extends num3>(target: num3): vec3
+    static normalize(target: num3): vec3
     static normalize<T extends num3>(target: num3, out?: T): T
     static normalize<T extends num3>(target: num3, out?: T) {
         return this.scale(target, rsqrt(this.dot(target, target)), out) as T;
     }
     /** Returns the normalized vector of `target` if possible, else `(0,0,0)`. */
-    static normalizeSafe<T extends num3>(target: num3): vec3
+    static normalizeSafe(target: num3): vec3
     static normalizeSafe<T extends num3>(target: num3, out?: T): T
     static normalizeSafe<T extends num3>(target: num3, out?: T) {
         let rcp = this.rlen(target);
@@ -203,11 +213,11 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
         }
         return this.set(out ?? vec3(), 0, 0, 0) as T;
     }
-    /** Returns the dot product of given . */
+    /** Returns the dot product of given vectors. */
     static dot(lhs: num3, rhs: num3): number {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
     }
-    /** Returns the cross product of given . */
+    /** Returns the cross product of given vectors. */
     static cross(lhs: num3, rhs: num3): vec3
     static cross<T extends num3>(lhs: num3, rhs: num3, out?: T): T
     static cross<T extends num3>(lhs: num3, rhs: num3, out?: T) {
@@ -220,7 +230,7 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
     static project(lhs: num3, rhs: num3): vec3
     static project<T extends num3>(lhs: num3, rhs: num3, out?: T): T
     static project<T extends num3>(lhs: num3, rhs: num3, out?: T) {
-        return vec3.scale(rhs, vec3.dot(lhs, rhs) / vec3.dot(rhs, rhs), out) as T;
+        return vec3.scale(rhs, this.dot(lhs, rhs) / this.dot(rhs, rhs), out) as T;
     }
     /** Returns the vector rejection of `lhs` from `rhs`. */
     static reject(lhs: num3, rhs: num3): vec3
@@ -265,7 +275,7 @@ class Vec3 implements num3 {
     set(...args: SetParams<typeof vec3>): this {
         return vec3.set(this, ...args);
     }
-    /** Copy properies from `src` */
+    /** Copy properties from `src` */
     copy(src: num3): this {
         return vec3.copy(this, src);
     }
@@ -273,39 +283,45 @@ class Vec3 implements num3 {
     toString() {
         return vec3.fmt(this);
     }
-    /** Returns each elemnt as an array. */
+    /** Returns each element as an array. */
     toArray(): [x: number, y: number, z: number] {
         return vec3.toArray(this);
     }
     /** Returns `x` and `y` components as a 2-dim vector. */
-    xy<T extends num2>(): vec2
+    xy(): vec2
     xy<T extends num2>(out?: T): T
     xy<T extends num2>(out?: T) {
-        return vec2.set(out ?? vec2(), this.x, this.y) as T;
+        return vec3.xy(this, out ?? vec2()) as T;
     }
     /** Returns `x` and `y` components as a 2-dim vector. Defaults to `this` if no `out` parameter is given. */
-    trunc<T extends num2>(): vec2
+    trunc(): vec2
     trunc<T extends num2>(out?: T): T
     trunc<T extends num2>(out?: T) {
-        return vec3.xy(this, out ?? this) as T;
+        return vec3.trunc(this, out ?? this) as T;
+    }
+    /** Returns `target` as a 3-dimensional vector with given `z` value. */
+    extend(w?: number): vec4
+    extend<T extends num4>(w?: number, out?: T): T
+    extend<T extends num4>(w?: number, out?: T) {
+        return vec3.extend(this, w, out ?? vec4()) as T;
     }
     /** Returns `y` and `z` components as a 2-dim vector. */
-    yz<T extends num2>(): vec2
+    yz(): vec2
     yz<T extends num2>(out?: T): T
     yz<T extends num2>(out?: T) {
-        return vec2.set(out ?? vec2(), this.y, this.z) as T;
+        return vec3.yz(this, out ?? vec2()) as T;
     }
     /** Returns `x` and `z` components as a 2-dim vector. */
-    xz<T extends num2>(): vec2
+    xz(): vec2
     xz<T extends num2>(out?: T): T
     xz<T extends num2>(out?: T) {
-        return vec2.set(out ?? vec2(), this.x, this.z) as T;
+        return vec3.xz(this, out ?? vec2()) as T;
     }
     /** Returns vector with `z` component set to zero. */
     xy0(): vec3
     xy0<T extends num3>(out?: T): T
     xy0<T extends num3>(out?: T) {
-        return vec3.set(out ?? vec3(), this.x, this.y, 0) as T;
+        return vec3.xy0(this, out ?? vec3()) as T;
     }
     /** Returns true if each element is finite. */
     isFinite(): boolean {
@@ -351,7 +367,7 @@ class Vec3 implements num3 {
     neg(): this {
         return vec3.neg(this, this);
     }
-    /** Inverse vector */
+    /** Inverse the vector */
     inv(): this {
         return vec3.inv(this, this);
     }
@@ -396,12 +412,16 @@ class Vec3 implements num3 {
         return vec3.cross(this, rhs, this);
     }
     /** Project `this` onto `rhs`. */
-    project(rhs: num3): this {
-        return vec3.project(this, rhs, this);
+    project(rhs: num3): this
+    project<T extends num3>(rhs: num3, out?: T): T
+    project<T extends num3>(rhs: num3, out?: T) {
+        return vec3.project(this, rhs, out ?? this);
     }
     /** Rejection of `this` from `rhs`. */
-    reject(rhs: num3): this {
-        return vec3.reject(this, rhs, this);
+    reject(rhs: num3): this
+    reject<T extends num3>(rhs: num3, out?: T): T
+    reject<T extends num3>(rhs: num3, out?: T) {
+        return vec3.reject(this, rhs, out ?? this);
     }
     /** Returns the angle (in radians) between `this` and `rhs`. */
     angle(rhs: num3): number {

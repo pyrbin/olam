@@ -7,9 +7,13 @@ import { vec3 } from "./vec3";
 export interface vec2 extends Vec2 { }
 
 export const vec2 = createImpl(class Vec2Impl extends Static {
+    /** Creates a 2-dimensional vector with all elements set to `v`. */
+    // @ts-ignore
+    static create(v: number = 0): vec2
     /** Creates a 2-dimensional vector. */
-    static create(x: number = 0, y: number = x): vec2 {
-        return new Vec2(x, y);
+    static create(x: number, y: number): vec2
+    static create(x: number, y: number) {
+        return new Vec2(x, y ?? x);
     }
     /** Creates a vector where each element is set to `0`. */
     static zero(): vec2 {
@@ -41,7 +45,7 @@ export const vec2 = createImpl(class Vec2Impl extends Static {
         target.y = args[1];
         return target;
     }
-    /** Copy properies from `b` to target vector `a` */
+    /** Copy properties from `b` to target vector `a` */
     static copy<T extends num2>(a: T, b: num2): T {
         return this.set(a, b.x, b.y);
     }
@@ -55,7 +59,7 @@ export const vec2 = createImpl(class Vec2Impl extends Static {
     static fromArray<T extends num2>(array: ArrayLike<number>, out?: T) {
         return this.set(out ?? vec2(), array[0] as number, array[1] as number);
     }
-    /** Returns each elemnt of `target` as an array. */
+    /** Returns each element of `target` as an array. */
     static toArray(target: num2): [x: number, y: number] {
         return [target.x, target.y];
     }
@@ -225,7 +229,7 @@ class Vec2 implements num2 {
     set(...args: SetParams<typeof vec2>): this {
         return vec2.set(this, ...args);
     }
-    /** Copy properies from `src` */
+    /** Copy properties from `src` */
     copy(src: num2): this {
         return vec2.copy(this, src);
     }
@@ -233,7 +237,7 @@ class Vec2 implements num2 {
     toString() {
         return vec2.fmt(this);
     }
-    /** Returns each elemnt as an array. */
+    /** Returns each element as an array. */
     toArray(): [x: number, y: number] {
         return vec2.toArray(this);
     }
@@ -286,7 +290,7 @@ class Vec2 implements num2 {
     neg(): this {
         return vec2.neg(this, this);
     }
-    /** Inverse vector */
+    /** Inverse the vector */
     inv() {
         return vec2.inv(this, this);
     }
@@ -331,12 +335,16 @@ class Vec2 implements num2 {
         return vec2.cross(this, rhs);
     }
     /** Project `this` onto `rhs`. */
-    project(rhs: num2): this {
+    project(rhs: num2): this
+    project<T extends num2>(rhs: num2, out?: T): T
+    project<T extends num2>(rhs: num2, out?: T) {
         return vec2.project(this, rhs, this);
     }
     /** Rejection of `this` from `rhs`. */
-    reject(rhs: num2): this {
-        return vec2.reject(this, rhs, this);
+    reject(rhs: num2): this
+    reject<T extends num2>(rhs: num2, out?: T): T
+    reject<T extends num2>(rhs: num2, out?: T) {
+        return vec2.reject(this, rhs, out ?? this);
     }
     /** Returns the angle (in radians) between `this` and `rhs`. */
     angle(rhs: num2): number {

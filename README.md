@@ -3,7 +3,7 @@
 An object-based linear algebra math library for game development.
 
 ```ts
-import { vec2, vec3, mat2, mat3, affine3 } from "ulm";
+import { vec2, vec3, mat2, mat3, affine3 } from "olam";
 
 let pos: vec3 = vec3(0,0,0)
 

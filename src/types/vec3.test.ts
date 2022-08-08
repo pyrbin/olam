@@ -69,7 +69,6 @@ suite("vec3", () => {
         expect(v1.len()).toBe(Math.sqrt(14));
         expect(v1.len2()).toBe(14);
         expect(v1.rlen()).toBe(recip(v1.len()));
-
     });
     test("dot product of two vectors", () => {
         let v1 = vec3(1, 2, 3);
@@ -151,6 +150,14 @@ suite("vec3", () => {
         let xz = v1.xz(vec2());
         expect(xz.x).toBe(v1.x);
         expect(xz.y).toBe(v1.z);
+    });
+    test("extend a vector", () => {
+        let v1 = vec3(1, 2, 3);
+        let v2 = v1.extend(4);
+        expect(v2.x).toBe(1);
+        expect(v2.y).toBe(2);
+        expect(v2.z).toBe(3);
+        expect(v2.w).toBe(4);
     });
     test("rotate a vector", () => {
         let v1 = vec3(1, 0, 0);
