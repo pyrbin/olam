@@ -1,4 +1,4 @@
-# ulm
+# olam
 
 An object-based linear algebra math library for game development.
 
