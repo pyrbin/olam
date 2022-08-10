@@ -49,6 +49,10 @@ export const mat4 = createImpl(class Mat4Impl extends Static {
             b.c2.x, b.c2.y, b.c2.z, b.c2.w,
             b.c3.x, b.c3.y, b.c3.z, b.c3.w);
     }
+    /** Clone `target` matrix */
+    static clone(target: num4x4): mat4 {
+        return this.copy(mat4.zero(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num4x4) {
         return `(${vec4.fmt(target.c0)},${vec4.fmt(target.c1)},${vec4.fmt(target.c2)},${vec4.fmt(target.c3)})`;
@@ -71,6 +75,18 @@ class Mat4 implements num4x4 {
     /** Set properties. */
     set(...args: SetParams<typeof mat4>): this {
         return mat4.set(this, ...args) as this;
+    }
+    /** Copy properties from `src`. */
+    copy(src: num4x4): this {
+        return mat4.copy(this, src);
+    }
+    /** Clone `this` matrix */
+    clone(): mat4 {
+        return mat4.clone(this);
+    }
+    /** Returns a string representation. */
+    toString() {
+        return mat4.fmt(this);
     }
 }
 

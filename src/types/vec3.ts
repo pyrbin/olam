@@ -58,6 +58,10 @@ export const vec3 = createImpl(class Vec3Impl extends Static {
     static copy<T extends num3>(a: T, b: num3): T {
         return this.set(a, b.x, b.y, b.z);
     }
+    /** Clone `target` vector. */
+    static clone(target: num3) {
+        return this.copy(vec3(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num3) {
         return `(${target.x}, ${target.y}, ${target.z})`;
@@ -278,6 +282,10 @@ class Vec3 implements num3 {
     /** Copy properties from `src` */
     copy(src: num3): this {
         return vec3.copy(this, src);
+    }
+    /** Clone this vector. */
+    clone(): vec3 {
+        return vec3.clone(this);
     }
     /** Returns a string representation  */
     toString() {

@@ -58,6 +58,10 @@ export const vec4 = createImpl(class Vec4Impl extends Static {
     static copy<T extends num4>(target: T, source: num4): T {
         return this.set(target, source.x, source.y, source.z, source.w);
     }
+    /** Clone `target` vector. */
+    static clone(target: num4) {
+        return this.copy(vec4(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num4): string {
         return `(${target.x}, ${target.y}, ${target.z}, ${target.w})`;
@@ -219,6 +223,10 @@ class Vec4 implements num4 {
     /** Set properties of this vector */
     set(...args: SetParams<typeof vec4>): this {
         return vec4.set(this, ...args);
+    }
+    /** Clone this vector */
+    clone() {
+        return vec4.clone(this);
     }
     /** Copy properties from `src` */
     copy(src: num4): this {

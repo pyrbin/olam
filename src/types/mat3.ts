@@ -41,6 +41,10 @@ export const mat3 = createImpl(class Mat3Impl extends Static {
             b.c1.x, b.c1.y, b.c1.z,
             b.c2.x, b.c2.y, b.c2.z);
     }
+    /** Clone `target` matrix */
+    static clone(target: num3x3): mat3 {
+        return this.copy(mat3.zero(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num3x3) {
         return `(${vec3.fmt(target.c0)},${vec3.fmt(target.c1)},${vec3.fmt(target.c2)})`;
@@ -348,6 +352,10 @@ class Mat3 implements num3x3 {
     /** Copy properties from `src`. */
     copy(src: num3x3): this {
         return mat2.copy(this, src);
+    }
+    /** Clone `this` matrix */
+    clone(): mat3 {
+        return mat3.clone(this);
     }
     /** Returns a string representation. */
     toString() {

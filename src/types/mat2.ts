@@ -31,6 +31,10 @@ export const mat2 = createImpl(class Mat2Impl extends Static {
     static copy<T extends num2x2>(a: T, b: num2x2): T {
         return this.set(a, b.c0.x, b.c0.y, b.c1.x, b.c1.y);
     }
+    /** Clone `target` matrix */
+    static clone(target: num2x2): mat2 {
+        return mat2.copy(mat2.zero(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num2x2) {
         return `(${vec2.fmt(target.c0)},${vec2.fmt(target.c1)})`;
@@ -202,6 +206,10 @@ class Mat2 implements num2x2 {
     /** Copy properties from `src`. */
     copy(src: num2x2) {
         return mat2.copy(this, src);
+    }
+    /** Clone `target` matrix */
+    clone(): mat2 {
+        return mat2.clone(this);
     }
     /** Returns a string representation. */
     toString() {

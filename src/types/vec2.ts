@@ -49,6 +49,10 @@ export const vec2 = createImpl(class Vec2Impl extends Static {
     static copy<T extends num2>(a: T, b: num2): T {
         return this.set(a, b.x, b.y);
     }
+    /** Clone this vector. */
+    static clone(target: num2): vec2 {
+        return this.copy(vec2(), target);
+    }
     /** Returns a string representation  */
     static fmt(target: num2) {
         return `(${target.x}, ${target.y})`;
@@ -233,6 +237,10 @@ class Vec2 implements num2 {
     copy(src: num2): this {
         return vec2.copy(this, src);
     }
+    /** Clone this vector */
+    clone(): vec2 {
+        return vec2.clone(this);
+    }
     /** Returns a string representation  */
     toString() {
         return vec2.fmt(this);
@@ -338,7 +346,7 @@ class Vec2 implements num2 {
     project(rhs: num2): this
     project<T extends num2>(rhs: num2, out?: T): T
     project<T extends num2>(rhs: num2, out?: T) {
-        return vec2.project(this, rhs, this);
+        return vec2.project(this, rhs, out ?? this);
     }
     /** Rejection of `this` from `rhs`. */
     reject(rhs: num2): this

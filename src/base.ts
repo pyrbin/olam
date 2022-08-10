@@ -7,7 +7,7 @@ export function createImpl<T extends Impl>(impl: T) {
             Object.assign(r, { [x]: impl[x] });
             return r;
         }, {}) as Omit<T, typeof ignored[number]>;
-    return Object.assign(methods.create, methods) as Type<T>;
+    return Object.assign(methods.create, methods) as TypeImpl<T>;
 }
 
 const ignored = ["length", "name", "prototype", "constructor", "new"] as const;
@@ -24,5 +24,5 @@ interface ImplBase<T> {
 interface Impl<Type = unknown> extends ImplBase<Type>, Class { }
 
 /** Describes the exported object that contains implemented oprations for a type (eg. `vec2`, `quat` etc.) */
-type Type<T extends Impl> = Omit<T, typeof ignored[number]> & T[typeof create];
+type TypeImpl<T extends Impl> = Omit<T, typeof ignored[number]> & T[typeof create];
 
