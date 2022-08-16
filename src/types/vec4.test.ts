@@ -1,5 +1,5 @@
 import { expect, suite, test } from "vitest";
-import { recip } from "../math";
+import { recip, sqrt } from "../math";
 import { vec4 } from "./vec4";
 
 suite("vec4", () => {
@@ -79,11 +79,11 @@ suite("vec4", () => {
         let v1 = vec4(1, 2, 3, 4);
         let v2 = vec4(4, 5, 6, 7);
         let v3 = v1.dot(v2);
-        expect(v3).toBe(32);
+        expect(v3).toBe(60);
     });
     test("compute the length of a vector", () => {
         let v1 = vec4(1, 2, 3, 4);
-        expect(v1.len()).toBe(Math.sqrt(30));
+        expect(v1.len()).toBe(sqrt(30));
         expect(v1.len2()).toBe(30);
         expect(v1.rlen()).toBe(recip(v1.len()));
     });

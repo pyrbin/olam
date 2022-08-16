@@ -1,5 +1,5 @@
 import { expect, suite, test } from "vitest";
-import { deg, feq, recip } from "../math";
+import { deg, feq, recip, sqrt } from "../math";
 import { vec2 } from "./vec2";
 import { vec3 } from "./vec3";
 
@@ -66,7 +66,7 @@ suite("vec3", () => {
     });
     test("compute the length of a vector", () => {
         let v1 = vec3(1, 2, 3);
-        expect(v1.len()).toBe(Math.sqrt(14));
+        expect(v1.len()).toBe(sqrt(14));
         expect(v1.len2()).toBe(14);
         expect(v1.rlen()).toBe(recip(v1.len()));
     });
@@ -87,9 +87,9 @@ suite("vec3", () => {
     test("normalize a vector", () => {
         let v1 = vec3(1, 2, 3);
         let v2 = v1.normalize();
-        expect(v2.x).toBe(1 / Math.sqrt(14));
-        expect(v2.y).toBe(2 / Math.sqrt(14));
-        expect(v2.z).toBe(3 / Math.sqrt(14));
+        expect(v2.x).toBe(1 / sqrt(14));
+        expect(v2.y).toBe(2 / sqrt(14));
+        expect(v2.z).toBe(3 / sqrt(14));
         expect(vec3.isNormalized(v2)).toBe(true);
     });
     test("normalize an invalid vector", () => {
@@ -127,7 +127,7 @@ suite("vec3", () => {
         let v1 = vec3(3, 2, -2);
         let v2 = vec3(5, -1, 5);
         let dist = v1.dist(v2);
-        expect(dist).toBe(Math.sqrt(62));
+        expect(dist).toBe(sqrt(62));
     });
     test("compute the squared distance between two vectors", () => {
         let v1 = vec3(3, 2, -2);

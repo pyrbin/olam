@@ -18,7 +18,7 @@ suite("mat2", () => {
         expect(m.c1.y).toBe(4);
     });
     test("create identity matrix", () => {
-        let m = mat2.identity();
+        let m = mat2();
         expect(mat2.eq(m, mat2.fromDiagonal(vec2(1, 1)))).toBe(true);
         expect(vec2.eq(m.toDiagonal(), vec2(1, 1))).toBe(true);
     });
@@ -90,7 +90,7 @@ suite("mat2", () => {
         let m = mat2(1, 2, 3, 4);
         expect(m.det()).toBe(-2);
         expect(mat2.det(mat2.zero())).toBe(0);
-        expect(mat2.det(mat2.identity())).toBe(1);
+        expect(mat2.det(mat2())).toBe(1);
     });
     test("compute inverse of a matrix", () => {
         let m = mat2(1, 2, 3, 4);

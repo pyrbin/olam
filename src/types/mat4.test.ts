@@ -22,7 +22,7 @@ suite("mat4", () => {
         expect(m.c3.w).toBe(16);
     });
     test("create identity matrix", () => {
-        let m = mat4.identity();
+        let m = mat4();
         expect(m.c0.x).toBe(1);
         expect(m.c0.y).toBe(0);
         expect(m.c0.z).toBe(0);

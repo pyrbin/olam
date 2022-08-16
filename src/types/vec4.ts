@@ -1,219 +1,218 @@
-import { createImpl, Static } from "../base";
-import { epsilon, feq, recip, rsqrt } from "../math";
+import { epsilon, feq, recip, rsqrt, sqrt } from "../math";
+import { createImpl, Static } from "../type_impl";
 import { vec3 } from "./vec3";
 
 /** A 4-dimensional vector.*/
 export interface vec4 extends Vec4 { };
 
 export const vec4 = createImpl(class Vec4Impl extends Static {
-    /** Creates a 2-dimensional vector with all elements set to `v`. */
+    /** Create a 4-dimensional vector with all elements set to `v`. */
     // @ts-ignore
     static create(v: number = 0): vec4
-    /** Creates a 4-dimensional vector. */
+    /** Create a 4-dimensional vector. */
     static create(x: number, y: number, z: number, w: number): vec4
     static create(x: number, y: number, z: number, w: number) {
         return new Vec4(x, y ?? x, z ?? x, w ?? x);
     }
-    /** Creates a vector where each element is set to `0`. */
+    /** Create a vector where each element is set to `0`. */
     static zero(): vec4 {
-        return this.create(0);
+        return vec4.create(0);
     }
-    /** Creates a vector where each element is set to `1`. */
+    /** Create a vector where each element is set to `1`. */
     static one(): vec4 {
-        return this.create(1);
+        return vec4.create(1);
     }
-    /** Creates a unit-length vector pointing along the positive y-axis. */
+    /** Create a unit-length vector pointing along the positive y-axis. */
     static up(): vec4 {
-        return this.create(1, 0, 0, 0);
+        return vec4.create(1, 0, 0, 0);
     }
-    /** Creates a unit-length vector pointing along the negative y-axis. */
+    /** Create a unit-length vector pointing along the negative y-axis. */
     static down(): vec4 {
-        return this.create(-1, 0, 0, 0);
+        return vec4.create(-1, 0, 0, 0);
     }
-    /** Creates a unit-length vector pointing along the negative x-axis. */
+    /** Create a unit-length vector pointing along the negative x-axis. */
     static left(): vec4 {
-        return this.create(0, -1, 0, 0);
+        return vec4.create(0, -1, 0, 0);
     }
-    /** Creates a unit-length vector pointing along the positive x-axis. */
+    /** Create a unit-length vector pointing along the positive x-axis. */
     static right(): vec4 {
-        return this.create(0, 1, 0, 0);
+        return vec4.create(0, 1, 0, 0);
     }
-    /** Creates a unit-length vector pointing along the negative z-axis. */
+    /** Create a unit-length vector pointing along the negative z-axis. */
     static back(): vec4 {
-        return this.create(0, 0, -1, 0);
+        return vec4.create(0, 0, -1, 0);
     }
-    /** Creates a unit-length vector pointing along the positive z-axis. */
+    /** Create a unit-length vector pointing along the positive z-axis. */
     static forward(): vec4 {
-        return this.create(0, 0, 1, 0);
+        return vec4.create(0, 0, 1, 0);
     }
-    /** Set properties of given vector `target` */
-    static set<T extends num4>(target: T, x: number, y: number, z: number, w: number): T {
-        target.x = x;
-        target.y = y;
-        target.z = z;
-        target.w = w;
-        return target;
+    /** Set properties of given vector `v` */
+    static set<T extends num4>(v: T, x: number, y: number, z: number, w: number): T {
+        v.x = x;
+        v.y = y;
+        v.z = z;
+        v.w = w;
+        return v;
     }
-    /** Copy properties from `b` to target vector `a` */
-    static copy<T extends num4>(target: T, source: num4): T {
-        return this.set(target, source.x, source.y, source.z, source.w);
+    /** Copy properties from `b` to v vector `a` */
+    static copy<T extends num4>(v: T, source: num4): T {
+        return vec4.set(v, source.x, source.y, source.z, source.w);
     }
-    /** Clone `target` vector. */
-    static clone(target: num4) {
-        return this.copy(vec4(), target);
+    /** Clone `v` vector. */
+    static clone(v: num4) {
+        return vec4.copy(vec4(), v);
     }
-    /** Returns a string representation  */
-    static fmt(target: num4): string {
-        return `(${target.x}, ${target.y}, ${target.z}, ${target.w})`;
+    /** Return a string representation  */
+    static fmt(v: num4): string {
+        return `(${v.x}, ${v.y}, ${v.z}, ${v.w})`;
     }
     /** Create a vector from an array-like. */
     static fromArray(array: ArrayLike<number>): vec4
     static fromArray<T extends num4>(array: ArrayLike<number>, out?: T): T
     static fromArray<T extends num4>(array: ArrayLike<number>, out?: T) {
-        return this.set(out ?? vec4(), array[0], array[1], array[2], array[3]);
+        return vec4.set(out ?? vec4(), array[0], array[1], array[2], array[3]);
     }
-    /** Returns each element of `target` as an array. */
-    static toArray(target: num4): [x: number, y: number, z: number, w: number] {
-        return [target.x, target.y, target.z, target.w];
+    /** Return each element of `v` as an array. */
+    static toArray(v: num4): [x: number, y: number, z: number, w: number] {
+        return [v.x, v.y, v.z, v.w];
     }
-    /** Returns `x`, `y` and `z` components as a 3-dim vector. */
-    static trunc(target: num4): vec3
-    static trunc<T extends num3>(target: num4, out?: T): T
-    static trunc<T extends num3>(target: num4, out?: T) {
-        return vec3.set(out ?? vec3(), target.x, target.y, target.z) as T;
+    /** Return `x`, `y` and `z` components as a 3-dim vector. */
+    static trunc(v: num4): vec3
+    static trunc<T extends num3>(v: num4, out?: T): T
+    static trunc<T extends num3>(v: num4, out?: T) {
+        return vec3.set(out ?? vec3(), v.x, v.y, v.z) as T;
     }
-    /** Returns true if each element of `target` is finite. */
-    static isFinite(target: num4): boolean {
-        return isFinite(target.x) && isFinite(target.y) && isFinite(target.z) && isFinite(target.w);
+    /** Return true if each element of `v` is finite. */
+    static isFinite(v: num4): boolean {
+        return isFinite(v.x) && isFinite(v.y) && isFinite(v.z) && isFinite(v.w);
     }
-    /** Returns true if any element of `target` is NaN. */
-    static isNan(target: num4): boolean {
-        return isNaN(target.x) || isNaN(target.y) || isNaN(target.z) || isNaN(target.w);
+    /** Return true if any element of `v` is NaN. */
+    static isNan(v: num4): boolean {
+        return isNaN(v.x) || isNaN(v.y) || isNaN(v.z) || isNaN(v.w);
     }
-    /** Returns true if given vector is normalized. */
-    static isNormalized(target: num4): boolean {
-        return Math.abs(this.len2(target) - 1) <= epsilon;
+    /** Return true if given vector is normalized. */
+    static isNormalized(v: num4): boolean {
+        return Math.abs(vec4.len2(v) - 1) <= epsilon;
     }
     /** Adds `lhs` and `rhs`. */
     static add(lhs: num4, rhs: num4): vec4
     static add<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static add<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.set(out ?? vec4(), lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
+        return vec4.set(out ?? vec4(), lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
     }
     /** Subtracts `lhs` and `rhs`. */
     static sub(lhs: num4, rhs: num4): vec4
     static sub<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static sub<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.set(out ?? vec4(), lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+        return vec4.set(out ?? vec4(), lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
     }
     /** Multiplies `lhs` and `rhs`. */
     static mul(lhs: num4, rhs: num4): vec4
     static mul<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static mul<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.set(out ?? vec4(), lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
+        return vec4.set(out ?? vec4(), lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
     }
     /** Multiplies a vector `lhs` and a scale value `rhs`. */
     static scale(lhs: num4, rhs: number): vec4
     static scale<T extends num4>(lhs: num4, rhs: number, out?: T): T
-    static scale<T extends num4>(lhs: num4, scale: number, out?: T) {
-        return this.set(out ?? vec4(), lhs.x * scale, lhs.y * scale, lhs.z * scale, lhs.w * scale);
+    static scale<T extends num4>(lhs: num4, rhs: number, out?: T) {
+        return vec4.set(out ?? vec4(), lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
     }
     /** Division between between `lhs` and `rhs`. */
     static div(lhs: num4, rhs: num4): vec4
     static div<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static div<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.set(out ?? vec4(), lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
+        return vec4.set(out ?? vec4(), lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
     }
     /** Check equality between `lhs` and `rhs`. */
     static eq(lhs: num4, rhs: num4): boolean {
         return feq(lhs.x, rhs.x) && feq(lhs.y, rhs.y) && feq(lhs.z, rhs.z) && feq(lhs.w, rhs.w);
     }
-    /** Returns a vector containing the absolute value of each element of `target`. */
-    static abs(target: num4): vec4
-    static abs<T extends num4>(target: num4, out?: T): T
-    static abs<T extends num4>(target: num4, out?: T) {
-        return this.set(out ?? vec4(), Math.abs(target.x), Math.abs(target.y), Math.abs(target.z), Math.abs(target.w));
+    /** Return a vector containing the absolute value of each element of `v`. */
+    static abs(v: num4): vec4
+    static abs<T extends num4>(v: num4, out?: T): T
+    static abs<T extends num4>(v: num4, out?: T) {
+        return vec4.set(out ?? vec4(), Math.abs(v.x), Math.abs(v.y), Math.abs(v.z), Math.abs(v.w));
     }
-    /** Returns a vector containing the negative value of each element of `target`. */
-    static neg(target: num4): vec4
-    static neg<T extends num4>(target: num4, out?: T): T
-    static neg<T extends num4>(target: num4, out?: T) {
-        return this.set(out ?? vec4(), -target.x, -target.y, -target.z, -target.w);
+    /** Return a vector containing the negative value of each element of `v`. */
+    static neg(v: num4): vec4
+    static neg<T extends num4>(v: num4, out?: T): T
+    static neg<T extends num4>(v: num4, out?: T) {
+        return vec4.set(out ?? vec4(), -v.x, -v.y, -v.z, -v.w);
     }
-    /** Returns a vector containing the inverse value of each element of `target`. */
-    static inv(target: num4): vec4
-    static inv<T extends num4>(target: num4, out?: T): T
-    static inv<T extends num4>(target: num4, out?: T) {
-        return this.set(out ?? vec4(), 1 / target.x, 1 / target.y, 1 / target.z, 1 / target.w);
+    /** Return a vector containing the inverse value of each element of `v`. */
+    static inv(v: num4): vec4
+    static inv<T extends num4>(v: num4, out?: T): T
+    static inv<T extends num4>(v: num4, out?: T) {
+        return vec4.set(out ?? vec4(), 1 / v.x, 1 / v.y, 1 / v.z, 1 / v.w);
     }
-    /** Returns the length for given vector */
-    static len(target: num4): number {
-        return Math.sqrt(this.len2(target));
+    /** Return the length for given vector */
+    static len(v: num4): number {
+        return sqrt(vec4.len2(v));
     }
-    /** Returns the length squared for given vector. */
-    static len2(target: num4): number {
-        return target.x * target.x + target.y * target.y + target.z * target.z + target.w * target.w;
+    /** Return the length squared for given vector. */
+    static len2(v: num4): number {
+        return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
     }
     /** Computes `1.0 / len()` for given vector. */
-    static rlen(target: num4): number {
-        return rsqrt(this.len2(target));
+    static rlen(v: num4): number {
+        return rsqrt(vec4.len2(v));
     }
-    /** Returns the euclidean distance between `lhs` and `rhs`. */
+    /** Return the euclidean distance between `lhs` and `rhs`. */
     static dist(lhs: num4, rhs: num4): number {
-        return this.len(this.sub(lhs, rhs));
+        return vec4.len(vec4.sub(lhs, rhs));
     }
-    /** Returns the euclidean distance squared between `lhs` and `rhs`. */
+    /** Return the euclidean distance squared between `lhs` and `rhs`. */
     static dist2(lhs: num4, rhs: num4): number {
-        return this.len2(this.sub(lhs, rhs));
+        return vec4.len2(vec4.sub(lhs, rhs));
     }
-    /** Returns `target` as a normalized vector. */
-    static normalize(target: num4): vec3
-    static normalize<T extends num4>(target: num4, out?: T): T
-    static normalize<T extends num4>(target: num4, out?: T) {
-        return this.scale(target, recip(this.len(target)), out);
+    /** Return `v` as a normalized vector. */
+    static normalize(v: num4): vec4
+    static normalize<T extends num4>(v: num4, out?: T): T
+    static normalize<T extends num4>(v: num4, out?: T) {
+        return vec4.scale(v, recip(vec4.len(v)), out);
     }
-    /** Returns the normalized vector of `target` if possible, else `(0,0,0)`. */
-    static normalizeSafe(target: num4): vec3
-    static normalizeSafe<T extends num4>(target: num4, out?: T): T
-    static normalizeSafe<T extends num4>(target: num4, out?: T) {
-        let rcp = this.rlen(target);
+    /** Return the normalized vector of `v` if possible, else `(0,0,0)`. */
+    static normalizeSafe(v: num4): vec4
+    static normalizeSafe<T extends num4>(v: num4, out?: T): T
+    static normalizeSafe<T extends num4>(v: num4, out?: T) {
+        let rcp = vec4.rlen(v);
         if (rcp > 0.0 && isFinite(rcp)) {
-            return this.normalize(target, out) as T;
+            return vec4.normalize(v, out) as T;
         }
-        return this.set(out ?? vec4(), 0, 0, 0, 0) as T;
+        return vec4.set(out ?? vec4(), 0, 0, 0, 0) as T;
     }
-    /** Returns the dot product of given vectors. */
+    /** Return the dot product of given vectors. */
     static dot(lhs: num4, rhs: num4): number {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
     }
-    /** Returns the vector projection of `self` onto `rhs`. */
-    static project(lhs: num4, rhs: num4): vec3
+    /** Return the vector projection of `self` onto `rhs`. */
+    static project(lhs: num4, rhs: num4): vec4
     static project<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static project<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.scale(rhs, this.dot(lhs, rhs) / this.dot(rhs, rhs), out);
+        return vec4.scale(rhs, vec4.dot(lhs, rhs) / vec4.dot(rhs, rhs), out);
     }
-    /** Returns the vector rejection of `lhs` from `rhs`. */
-    static reject(lhs: num4, rhs: num4): vec3
+    /** Return the vector rejection of `lhs` from `rhs`. */
+    static reject(lhs: num4, rhs: num4): vec4
     static reject<T extends num4>(lhs: num4, rhs: num4, out?: T): T
     static reject<T extends num4>(lhs: num4, rhs: num4, out?: T) {
-        return this.sub(lhs, this.project(lhs, rhs, out), out);
+        return vec4.sub(lhs, vec4.project(lhs, rhs, out), out);
     }
     /** Performs a linear interpolation between `a` and `b` based on the value `t`. */
     static lerp(a: num4, b: num4, t: number): vec4
     static lerp<T extends num4>(a: num4, b: num4, t: number, out?: T): T
     static lerp<T extends num4>(a: num4, b: num4, t: number, out?: T) {
-        return this.add(a, this.scale(this.sub(b, a, v1), t, v1), out) as T;
+        return vec4.add(a, vec4.scale(vec4.sub(b, a, v1), t, v1), out) as T;
     }
 });
 
-
 /** @internal */
-class Vec4 implements num4 {
+export class Vec4 implements num4 {
     x: number;
     y: number;
     z: number;
     w: number;
-    /** Creates a 4-dimensional vector. */
+    /** Create a 4-dimensional vector. */
     constructor(x: number, y: number, z: number, w: number) {
         this.x = x;
         this.y = y;
@@ -228,33 +227,33 @@ class Vec4 implements num4 {
     clone() {
         return vec4.clone(this);
     }
-    /** Copy properties from `src` */
-    copy(src: num4): this {
-        return vec4.copy(this, src);
+    /** Copy properties from `v` */
+    copy(v: num4): this {
+        return vec4.copy(this, v);
     }
-    /** Returns a string representation  */
+    /** Return a string representation  */
     toString() {
         return vec4.fmt(this);
     }
-    /** Returns each element as an array. */
+    /** Return each element as an array. */
     toArray(): [x: number, y: number, z: number, w: number] {
         return vec4.toArray(this);
     }
-    /** Returns `x`, `y` and `z` components as a 2-dim vector. Defaults to `this` if no `out` parameter is given. */
+    /** Return `x`, `y` and `z` components as a 2-dim vector. Defaults to `this` if no `out` parameter is given. */
     trunc<T extends num3>(): vec3
     trunc<T extends num3>(out?: T): T
     trunc<T extends num3>(out?: T) {
         return vec4.trunc(this, out ?? this) as T;
     }
-    /** Returns true if each element of `this` is finite. */
+    /** Return true if each element of `this` is finite. */
     isFinite(): boolean {
         return vec4.isFinite(this);
     }
-    /** Returns true if any element of `this` is NaN. */
+    /** Return true if any element of `this` is NaN. */
     isNan(): boolean {
         return vec4.isNan(this);
     }
-    /** Returns true if `this` is normalized. */
+    /** Return true if `this` is normalized. */
     isNormalized(): boolean {
         return vec4.isNormalized(this);
     }
@@ -294,11 +293,11 @@ class Vec4 implements num4 {
     inv(): this {
         return vec4.inv(this, this);
     }
-    /** Returns the length. */
+    /** Return the length. */
     len(): number {
         return vec4.len(this);
     }
-    /** Returns the length squared. */
+    /** Return the length squared. */
     len2(): number {
         return vec4.len2(this);
     }
@@ -306,11 +305,11 @@ class Vec4 implements num4 {
     rlen(): number {
         return vec4.rlen(this);
     }
-    /** Returns the dot product of of `this` & `rhs`. */
+    /** Return the dot product of of `this` & `rhs`. */
     dist(rhs: num4): number {
         return vec4.dist(this, rhs);
     }
-    /** Returns the cross product of `this` & `rhs`. */
+    /** Return the cross product of `this` & `rhs`. */
     dist2(rhs: num4): number {
         return vec4.dist2(this, rhs);
     }
@@ -324,7 +323,7 @@ class Vec4 implements num4 {
     }
     /** Dot product of `this` & `rhs`. */
     dot(rhs: num4): number {
-        return vec3.dot(this, rhs);
+        return vec4.dot(this, rhs);
     }
     /** Project `this` onto `rhs`. */
     project(rhs: num4): vec4
@@ -338,9 +337,9 @@ class Vec4 implements num4 {
     reject<T extends num4>(rhs: num4, out?: T) {
         return vec4.reject(this, rhs, out ?? this);
     }
-    /** Performs a linear interpolation between `this` and `target` based on the value `t`. */
-    lerp(target: num4, t: number): this {
-        return vec4.lerp(this, target, t, this);
+    /** Performs a linear interpolation between `this` and `v` based on the value `t`. */
+    lerp(v: num4, t: number): this {
+        return vec4.lerp(this, v, t, this);
     }
 }
 

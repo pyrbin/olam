@@ -1,17 +1,48 @@
 /** Epsilon */
 export let epsilon = 1E-8;
 
-/** Returns sin and cos of a number.*/
+/** Epsilon squared */
+export let epsilon2 = epsilon * epsilon;
+
+/** Return sin and cos of a number.*/
 export function sincos(value: number): [sin: number, cos: number] {
     return [Math.sin(value), Math.cos(value)];
 }
 
-/** Returns the reciprocal square root of a number `1 / sqrt(x)`. */
-export function rsqrt(value: number): number {
-    return recip(Math.sqrt(value));
+/** Returns the value of a base expression taken to a specified power. */
+export function pow(value: number, power: number): number {
+    return value ** power;
 }
 
-/** Returns the reciprocal (inverse) of a number, `1 / x`. */
+/** Returns the square root of a number. */
+export const sqrt: (value: number) => number = (() => {
+    const max = 300_000;
+    function benchPow() {
+        let r = .5;
+        for (let i = 1; i <= max; ++i) r *= 1. / pow(r, .5);
+        return r;
+    }
+    function benchSqrt() {
+        let r = .5;
+        for (let i = 1; i <= max; ++i) r *= 1. / Math.sqrt(r);
+        return r;
+    }
+    let startTS = Date.now()
+    let r = benchPow()
+    let endPow = Date.now() - startTS
+    startTS = Date.now()
+    r = benchSqrt()
+    let endSqrt = Date.now() - startTS
+    let sqrt = endSqrt < endPow ? Math.sqrt : (value: number) => pow(value, .5);
+    return sqrt
+})();
+
+/** Return the reciprocal square root of a number `1 / sqrt(x)`. */
+export function rsqrt(value: number): number {
+    return recip(sqrt(value));
+}
+
+/** Return the reciprocal (inverse) of a number, `1 / x`. */
 export function recip(value: number): number {
     return 1 / value;
 }

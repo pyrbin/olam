@@ -30,7 +30,7 @@ suite("mat3", () => {
         expect(m.c2.z).toBe(9);
     });
     test("create identity matrix", () => {
-        let m = mat3.identity();
+        let m = mat3();
         expect(m.eq(mat3.fromDiagonal(vec3(1, 1, 1)))).toBe(true);
         expect(vec3.eq(mat3.toDiagonal(m), vec3(1, 1, 1))).toBe(true);
     });
@@ -126,7 +126,7 @@ suite("mat3", () => {
         let m1 = mat3(1, 2, 3, 4, 5, 6, 7, 8, 9);
         expect(m1.det()).toBe(0);
         expect(mat3.det(mat3.zero())).toBe(0);
-        expect(mat3.det(mat3.identity())).toBe(1);
+        expect(mat3.det(mat3())).toBe(1);
         expect(mat3.det(mat3.fromRotationX(deg(90)))).toBe(1);
     });
     test("compute inverse of matrix", () => {
