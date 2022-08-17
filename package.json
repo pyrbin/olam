@@ -10,7 +10,8 @@
     "build": "tsc -b",
     "dev": "tsc -b -w",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "format": "prettier --write src/"
   },
   "devDependencies": {
     "c8": "^7.12.0",
